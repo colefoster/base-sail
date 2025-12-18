@@ -3,13 +3,19 @@
 namespace App\Filament\Pages;
 
 use Filament\Actions\Action;
+
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 
 use Filament\Auth\Pages\Login as BaseLogin;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Colors\Color;
+use Filament\Notifications\Notification;
+use Filament\Support\Enums\Size;
+use Illuminate\Support\Facades\Auth;
 
 class Login extends BaseLogin
 {
@@ -18,7 +24,21 @@ class Login extends BaseLogin
     protected function getAuthenticateFormAction(): Action
     {
         return Action::make('guestLogin')
-            ->label('Guest login');
+            ->label('Guest Access')
+            ->size(Size::ExtraLarge)
+            ->action(function () {
+                if (Auth::attempt(['email' => 'guest@example.com', 'password' => 'password'])) {
+                    return redirect()->intended(filament()->getUrl());
+                }
+
+                Notification::make()
+                    ->title('Guest login failed')
+                    ->danger()
+                    ->send();
+
+                return null;
+            })
+            ->color('');
 
     }
 
@@ -27,7 +47,8 @@ class Login extends BaseLogin
         return $schema
             ->components([
                 // Customize your login form schema here
-                Section::make('Login')->schema([
+                Section::make('User Access')
+                    ->schema([
                     $this->getEmailFormComponent(),
                     $this->getPasswordFormComponent(),
                     $this->getRememberFormComponent(),
@@ -40,7 +61,8 @@ class Login extends BaseLogin
                     )->fullWidth()
                 ])->collapsed(),
 
-                TextEntry::make('or')->alignCenter()->color(Color::Gray)
+                View::make('filament.components.login.custom-or')
+                    ->columnSpanFull(),
 
             ]);
 

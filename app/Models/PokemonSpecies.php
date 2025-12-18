@@ -40,6 +40,13 @@ class PokemonSpecies extends Model
         'evolution_chain_id' => 'integer',
     ];
 
+    protected static function booted(): void
+    {
+        static::addGlobalScope('ordered', function ($query) {
+            $query->orderBy('api_id');
+        });
+    }
+
     public function evolutionChain(): BelongsTo
     {
         return $this->belongsTo(EvolutionChain::class);

@@ -20,6 +20,13 @@ class Type extends Model
         'api_id' => 'integer',
     ];
 
+    protected static function booted(): void
+    {
+        static::addGlobalScope('ordered', function ($query) {
+            $query->orderBy('api_id');
+        });
+    }
+
     public function pokemon(): BelongsToMany
     {
         return $this->belongsToMany(Pokemon::class, 'pokemon_type')

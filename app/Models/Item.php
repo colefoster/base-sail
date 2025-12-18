@@ -30,6 +30,13 @@ class Item extends Model
         'fling_power' => 'integer',
     ];
 
+    protected static function booted(): void
+    {
+        static::addGlobalScope('ordered', function ($query) {
+            $query->orderBy('api_id');
+        });
+    }
+
     public function pokemon(): BelongsToMany
     {
         return $this->belongsToMany(Pokemon::class, 'pokemon_item')

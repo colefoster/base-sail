@@ -19,6 +19,13 @@ class EvolutionChain extends Model
         'api_id' => 'integer',
     ];
 
+    protected static function booted(): void
+    {
+        static::addGlobalScope('ordered', function ($query) {
+            $query->orderBy('api_id');
+        });
+    }
+
     public function species(): HasMany
     {
         return $this->hasMany(PokemonSpecies::class);

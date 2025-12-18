@@ -27,6 +27,13 @@ class DatabaseSeeder extends Seeder
             'is_admin' => true,
         ]);
 
+        User::factory()->create([
+            'name' => 'Guest User',
+            'email' => 'guest@example.com',
+            'password' => 'password',
+            'is_admin' => false,
+        ]);
+
         $this->command->info("✅ Users created successfully!");
         $this->command->newLine();
 

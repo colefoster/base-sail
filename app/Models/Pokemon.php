@@ -38,6 +38,13 @@ class Pokemon extends Model
         'species_id' => 'integer',
     ];
 
+    protected static function booted(): void
+    {
+        static::addGlobalScope('ordered', function ($query) {
+            $query->orderBy('api_id');
+        });
+    }
+
     public function species(): BelongsTo
     {
         return $this->belongsTo(PokemonSpecies::class, 'species_id');

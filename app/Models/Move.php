@@ -62,6 +62,13 @@ class Move extends Model
         'stat_chance' => 'integer',
     ];
 
+    protected static function booted(): void
+    {
+        static::addGlobalScope('ordered', function ($query) {
+            $query->orderBy('api_id');
+        });
+    }
+
     public function type(): BelongsTo
     {
         return $this->belongsTo(Type::class);
