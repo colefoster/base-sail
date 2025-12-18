@@ -2,55 +2,53 @@
 
 namespace App\Filament\Resources\Pokemon\Schemas;
 
-use App\Models\Pokemon;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
+use App\Filament\Resources\Pokemon\Schemas\Components\EvolutionsSection;
+use App\Filament\Resources\Pokemon\Schemas\Components\SpeciesDetailsSection;
+use App\Filament\Resources\Pokemon\Schemas\Components\SpritesSection;
+use App\Filament\Resources\Pokemon\Schemas\Components\StatsSection;
+use App\Livewire\PokemonMovesTable;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Schema;
 
 class PokemonInfolist
 {
+
+
+    protected static ?string $title = 'Custom Page Title';
+
+
     public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
-                TextEntry::make('api_id')
-                    ->numeric(),
-                TextEntry::make('name'),
-                TextEntry::make('height')
-                    ->numeric()
-                    ->placeholder('-'),
-                TextEntry::make('weight')
-                    ->numeric()
-                    ->placeholder('-'),
-                TextEntry::make('base_experience')
-                    ->numeric()
-                    ->placeholder('-'),
-                IconEntry::make('is_default')
-                    ->boolean(),
-                TextEntry::make('species.name')
-                    ->label('Species')
-                    ->placeholder('-'),
-                TextEntry::make('sprite_front_default')
-                    ->placeholder('-'),
-                TextEntry::make('sprite_front_shiny')
-                    ->placeholder('-'),
-                TextEntry::make('sprite_back_default')
-                    ->placeholder('-'),
-                TextEntry::make('sprite_back_shiny')
-                    ->placeholder('-'),
-                TextEntry::make('cry_latest')
-                    ->placeholder('-'),
-                TextEntry::make('cry_legacy')
-                    ->placeholder('-'),
-                TextEntry::make('created_at')
-                    ->dateTime()
-                    ->placeholder('-'),
-                TextEntry::make('updated_at')
-                    ->dateTime()
-                    ->placeholder('-'),
-                TextEntry::make('deleted_at')
-                    ->dateTime()
-                    ->visible(fn (Pokemon $record): bool => $record->trashed()),
+                SpeciesDetailsSection::make()
+                    ->columnSpan([
+                        'sm' => 'full',
+                        'md' => 'full',
+                        'lg' => 1,
+                    ]),
+                Grid::make(1)
+                    ->schema([
+                        SpritesSection::make(),
+                        StatsSection::make(),
+                    ])
+                    ->columnSpan([
+                        'sm' => 'full',
+                        'md' => 'full',
+                        'lg' => 1,
+                    ]),
+
+                EvolutionsSection::make()
+                    ->columnSpanFull(),
+
+                Livewire::make(PokemonMovesTable::class, fn($record) => ['pokemon' => $record])
+                    ->columnSpanFull()
+            ])
+            ->columns([
+                'sm' => 1,
+                'md' => 1,
+                'lg' => 2,
             ]);
     }
 }

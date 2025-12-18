@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\Pokemon;
+namespace App\Filament\Resources\Abilities;
 
-use App\Filament\Resources\Pokemon\Pages\CreatePokemon;
-use App\Filament\Resources\Pokemon\Pages\EditPokemon;
-use App\Filament\Resources\Pokemon\Pages\ListPokemon;
-use App\Filament\Resources\Pokemon\Pages\ViewPokemon;
-use App\Filament\Resources\Pokemon\Schemas\PokemonForm;
-use App\Filament\Resources\Pokemon\Schemas\PokemonInfolist;
-use App\Filament\Resources\Pokemon\Tables\PokemonTable;
-use App\Models\Pokemon;
+use App\Filament\Resources\Abilities\Pages\CreateAbility;
+use App\Filament\Resources\Abilities\Pages\EditAbility;
+use App\Filament\Resources\Abilities\Pages\ListAbilities;
+use App\Filament\Resources\Abilities\Pages\ViewAbility;
+use App\Filament\Resources\Abilities\Schemas\AbilityForm;
+use App\Filament\Resources\Abilities\Schemas\AbilityInfolist;
+use App\Filament\Resources\Abilities\Tables\AbilitiesTable;
+use App\Models\Ability;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -18,12 +18,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PokemonResource extends Resource
+class AbilityResource extends Resource
 {
-    protected static ?string $model = Pokemon::class;
-
-
-    protected static ?int $navigationSort = -2;
+    protected static ?string $model = Ability::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
@@ -31,17 +28,17 @@ class PokemonResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return PokemonForm::configure($schema);
+        return AbilityForm::configure($schema);
     }
 
     public static function infolist(Schema $schema): Schema
     {
-        return PokemonInfolist::configure($schema);
+        return AbilityInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return PokemonTable::configure($table);
+        return AbilitiesTable::configure($table);
     }
 
     public static function getRelations(): array
@@ -50,13 +47,14 @@ class PokemonResource extends Resource
             //
         ];
     }
+
     public static function getPages(): array
     {
         return [
-            'index' => ListPokemon::route('/'),
-            'create' => CreatePokemon::route('/create'),
-            'view' => ViewPokemon::route('/{record}'),
-            'edit' => EditPokemon::route('/{record}/edit'),
+            'index' => ListAbilities::route('/'),
+            'create' => CreateAbility::route('/create'),
+            'view' => ViewAbility::route('/{record}'),
+            'edit' => EditAbility::route('/{record}/edit'),
         ];
     }
 

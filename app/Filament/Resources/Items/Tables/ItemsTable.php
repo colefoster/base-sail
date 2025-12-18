@@ -8,9 +8,13 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ItemsTable
 {
@@ -23,17 +27,13 @@ class ItemsTable
                     ->sortable(),
                 TextColumn::make('name')
                     ->searchable(),
+                ImageColumn::make('sprite'),
+
                 TextColumn::make('cost')
                     ->money()
                     ->sortable(),
-                TextColumn::make('fling_power')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('fling_effect')
-                    ->searchable(),
                 TextColumn::make('category')
-                    ->searchable(),
-                TextColumn::make('sprite')
+                    ->formatStateUsing(fn ($state) => ucwords(str_replace('-', ' ', ($state))))
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -43,12 +43,56 @@ class ItemsTable
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('category')
+                    ->options(fn () => \App\Models\Item::query()
+                        ->distinct()
+                        ->pluck('category', 'category')
+                        ->filter()
+                        ->sort()
+                    )
+                    ->searchable()
+                    ->multiple(),
+
+                Filter::make('cost')
+                    ->form([
+                        \Filament\Forms\Components\TextInput::make('cost_from')
+                            ->numeric()
+                            ->label('Min Cost')
+                            ->placeholder('0'),
+                        \Filament\Forms\Components\TextInput::make('cost_to')
+                            ->numeric()
+                            ->label('Max Cost')
+                            ->placeholder('100,000'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['cost_from'] !== null,
+                                fn (Builder $query, $value): Builder => $query->where('cost', '>=', $data['cost_from']),
+                            )
+                            ->when(
+                                $data['cost_to'] !== null,
+                                fn (Builder $query, $value): Builder => $query->where('cost', '<=', $data['cost_to']),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if ($data['cost_from'] !== null) {
+                            $indicators[] = \Filament\Tables\Filters\Indicator::make('Min cost: $' . number_format($data['cost_from']))
+                                ->removeField('cost_from');
+                        }
+
+                        if ($data['cost_to'] !== null) {
+                            $indicators[] = \Filament\Tables\Filters\Indicator::make('Max cost: $' . number_format($data['cost_to']))
+                                ->removeField('cost_to');
+                        }
+
+                        return $indicators;
+                    }),
+
                 TrashedFilter::make(),
             ])
             ->recordActions([

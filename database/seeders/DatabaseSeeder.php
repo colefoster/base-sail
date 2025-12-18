@@ -12,7 +12,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Get parallel processing options with defaults
+        $threads = (int) ($this->command->option('threads') ?? 4);
+        $delay = (int) ($this->command->option('delay') ?? 100);
+        $limit = (int) ($this->command->option('limit') ?? 100);
+
         // Seed users first
+        $this->command->info("👥 Creating users...");
         User::factory(10)->create();
 
         User::factory()->create([
@@ -21,17 +27,40 @@ class DatabaseSeeder extends Seeder
             'is_admin' => true,
         ]);
 
-        // Seed Pokemon data from PokeAPI in the correct order
+        $this->command->info("✅ Users created successfully!");
+        $this->command->newLine();
+
+        // Seed Pokemon data from PokeAPI with parallel processing
         // Order matters due to foreign key dependencies
-        $this->call([
-            TypeSeeder::class,           // Must be first (Types are referenced by Moves and Pokemon)
-            AbilitySeeder::class,        // Can run after Types
-            MoveSeeder::class,           // Depends on Types
-            ItemSeeder::class,           // Can run independently
-            PokemonSpeciesSeeder::class, // Must be before Pokemon and EvolutionChains
-            EvolutionChainSeeder::class, // Depends on PokemonSpecies
-            PokemonSeeder::class,        // Depends on Types, Abilities, Moves, Items, and PokemonSpecies
-        ]);
+        $commands = [
+            ['seed:types', 'Types'],
+            ['seed:abilities', 'Abilities'],
+            ['seed:moves', 'Moves'],
+            ['seed:items', 'Items'],
+            ['seed:pokemon-species', 'Pokemon Species'],
+            ['seed:evolution-chains', 'Evolution Chains'],
+            ['seed:pokemon', 'Pokemon'],
+        ];
+
+        foreach ($commands as [$command, $label]) {
+            $this->command->info("📦 Seeding {$label}...");
+
+            $result = $this->command->call($command, [
+                '--threads' => $threads,
+                '--delay' => $delay,
+                '--limit' => $limit,
+            ]);
+
+            if ($result !== 0) {
+                $this->command->error("❌ Failed to seed {$label}");
+                return;
+            }
+
+            $this->command->newLine();
+        }
+
+        $this->command->newLine();
+        $this->command->info('✅ Database seeding completed successfully!');
     }
 }
 
