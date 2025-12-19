@@ -22,12 +22,11 @@ class DatabaseSeedCommand extends Command
 
     public function handle(): int
     {
-        if (!$this->confirmToProceed()) {
-            return 1;
-        }
 
         $database = $this->input->getOption('database');
-        $this->resolver->setDefaultConnection($database);
+        if ($database) {
+            $this->resolver->setDefaultConnection($database);
+        }
 
         $threads = (int) $this->option('threads');
         $delay = (int) $this->option('delay');
@@ -45,7 +44,10 @@ class DatabaseSeedCommand extends Command
         // Create seeder instance
         $seeder = $this->laravel->make($class);
 
-        // Run the seeder (it will access options via $this->command->option())
+        // Set the command instance so the seeder can access options
+        $seeder->setCommand($this);
+
+        // Run the seeder
         $seeder->__invoke();
 
         $this->newLine();

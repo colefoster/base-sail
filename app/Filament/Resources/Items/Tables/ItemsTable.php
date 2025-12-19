@@ -10,6 +10,7 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -46,22 +47,23 @@ class ItemsTable
             ])
             ->filters([
                 SelectFilter::make('category')
-                    ->options(fn () => \App\Models\Item::query()
+                    ->options(fn () => \App\Models\Item::withoutGlobalScope('ordered')
+                        ->select('category')
                         ->distinct()
+                        ->orderBy('category')
                         ->pluck('category', 'category')
                         ->filter()
-                        ->sort()
                     )
                     ->searchable()
                     ->multiple(),
 
                 Filter::make('cost')
                     ->form([
-                        \Filament\Forms\Components\TextInput::make('cost_from')
+                        TextInput::make('cost_from')
                             ->numeric()
                             ->label('Min Cost')
                             ->placeholder('0'),
-                        \Filament\Forms\Components\TextInput::make('cost_to')
+                        TextInput::make('cost_to')
                             ->numeric()
                             ->label('Max Cost')
                             ->placeholder('100,000'),

@@ -19,21 +19,7 @@ class DatabaseSeeder extends Seeder
 
         // Seed users first
         $this->command->info("👥 Creating users...");
-        User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'is_admin' => true,
-        ]);
-
-        User::factory()->create([
-            'name' => 'Guest User',
-            'email' => 'guest@example.com',
-            'is_admin' => false,
-        ]);
-
-        $this->command->info("Admin and Guest Users created successfully!");
+        $this->call(UserSeeder::class);
         $this->command->newLine();
 
         // Seed Pokemon data from PokeAPI with parallel processing

@@ -61,4 +61,12 @@ class User extends Authenticatable
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
     }
+
+    /**
+     * Determine if the user can access the Filament admin panel
+     */
+    public function canAccessPanel(\Filament\Panel $panel): bool
+    {
+        return $this->is_admin;
+    }
 }
