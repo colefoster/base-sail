@@ -12,7 +12,7 @@ use App\Models\PokemonGameIndex;
 use App\Models\PokemonSpecies;
 use App\Models\PokemonStat;
 use App\Models\Type;
-use App\Services\PokeApiImporter;
+use App\Services\SeederProgressService;
 use Filament\Forms\Components\Checkbox;
 
 use Filament\Forms\Components\TextInput;
@@ -158,23 +158,28 @@ class PokeApiImportWidget extends Widget implements HasForms
         $this->isImporting = true;
         $this->resetProgress();
 
-        // Build the command with selected types
-        $flags = [];
-        if ($data['importTypes'] ?? false) $flags[] = '--types';
-        if ($data['importAbilities'] ?? false) $flags[] = '--abilities';
-        if ($data['importMoves'] ?? false) $flags[] = '--moves';
-        if ($data['importItems'] ?? false) $flags[] = '--items';
-        if ($data['importSpecies'] ?? false) $flags[] = '--species';
-        if ($data['importEvolutionChains'] ?? false) $flags[] = '--evolution-chains';
-        if ($data['importPokemon'] ?? false) $flags[] = '--pokemon';
+        // Reset the progress service
+        app(SeederProgressService::class)->reset();
+
+        // Build the command to run seeders in the background
+        $seeders = [];
+        if ($data['importTypes'] ?? false) $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\TypeSeeder';
+        if ($data['importAbilities'] ?? false) $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\AbilitySeeder';
+        if ($data['importMoves'] ?? false) $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\MoveSeeder';
+        if ($data['importItems'] ?? false) $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\ItemSeeder';
+        if ($data['importSpecies'] ?? false) $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\PokemonSpeciesSeeder';
+        if ($data['importEvolutionChains'] ?? false) $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\EvolutionChainSeeder';
+        if ($data['importPokemon'] ?? false) $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\PokemonSeeder';
+
+        // Build command to run all seeders sequentially
+        $seederCommands = array_map(function($seeder) use ($data) {
+            return sprintf('php %s/artisan %s', base_path(), $seeder);
+        }, $seeders);
 
         $command = sprintf(
-            'php %s/artisan pokeapi:import --delay=%d --limit=%d%s %s > /dev/null 2>&1 &',
-            base_path(),
-            $data['delay'],
-            $data['limit'],
-            !empty($data['maxPokemon']) ? " --max={$data['maxPokemon']}" : '',
-            implode(' ', $flags)
+            '(%s && php %s/artisan cache:put seeder_progress \'{"progress":{"current_step":"complete","total":0,"current":0,"message":"Import complete!"},"successCount":0,"errorCount":0}\' 3600) > /dev/null 2>&1 &',
+            implode(' && ', $seederCommands),
+            base_path()
         );
 
         // Run in background
@@ -191,8 +196,8 @@ class PokeApiImportWidget extends Widget implements HasForms
         }
 
         // Read progress from cache
-        $importer = new PokeApiImporter();
-        $data = $importer->getProgress();
+        $progressService = app(SeederProgressService::class);
+        $data = $progressService->getProgress();
 
         $this->progress = $data['progress'] ?? $this->progress;
         $this->successCount = $data['successCount'] ?? 0;
@@ -208,7 +213,6 @@ class PokeApiImportWidget extends Widget implements HasForms
     public function stopImport(): void
     {
         $this->isImporting = false;
-        $this->importer = null;
         $this->dispatch('import-stopped');
     }
 

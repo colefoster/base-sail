@@ -61,7 +61,7 @@ class DatabaseSeedCommand extends Command
             ['database', null, InputOption::VALUE_OPTIONAL, 'The database connection to seed'],
             ['force', null, InputOption::VALUE_NONE, 'Force the operation to run when in production'],
             ['threads', null, InputOption::VALUE_OPTIONAL, 'Number of parallel workers', '4'],
-            ['delay', null, InputOption::VALUE_OPTIONAL, 'Delay between requests in milliseconds', '100'],
+            ['delay', null, InputOption::VALUE_OPTIONAL, 'Delay between requests in milliseconds', '20'],
             ['limit', null, InputOption::VALUE_OPTIONAL, 'Items per page', '100'],
         ];
     }
