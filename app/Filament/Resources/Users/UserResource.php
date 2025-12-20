@@ -47,12 +47,6 @@ class UserResource extends Resource
         return UsersTable::configure($table);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
     public static function shouldRegisterNavigation(): bool
     {
         return auth()->user()?->is_admin ?? false;
