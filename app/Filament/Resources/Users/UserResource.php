@@ -37,12 +37,6 @@ class UserResource extends Resource
         return 'The number of users';
     }
 
-
-    public static function form(Schema $schema): Schema
-    {
-        //return UserForm::configure($schema);
-    }
-
     public static function infolist(Schema $schema): Schema
     {
         return UserInfolist::configure($schema);
