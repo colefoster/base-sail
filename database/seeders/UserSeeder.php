@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
     {
         // Create admin user
         User::factory()->create([
-            'name' => 'Test User',
+            'name' => 'Administrator',
             'email' => 'test@example.com',
             'is_admin' => true,
         ]);

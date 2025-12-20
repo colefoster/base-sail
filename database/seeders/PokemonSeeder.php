@@ -10,85 +10,33 @@ use App\Models\PokemonGameIndex;
 use App\Models\PokemonSpecies;
 use App\Models\PokemonStat;
 use App\Models\Type;
-use App\Services\PokeApiService;
-use App\Services\SeederProgressService;
-use Illuminate\Database\Seeder;
 
-class PokemonSeeder extends Seeder
+class PokemonSeeder extends BasePokeApiSeeder
 {
-    protected PokeApiService $api;
-    protected SeederProgressService $progress;
-
-    public function __construct()
-    {
-        $this->api = app(PokeApiService::class);
-        $this->progress = app(SeederProgressService::class);
-    }
-
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $this->command->info('🎮 Importing Pokemon...');
+        $this->importWithPagination(
+            endpoint: '/pokemon',
+            progressKey: 'pokemon',
+            emoji: '🎮',
+            resourceName: 'Pokemon',
+            processItem: function (int $pokemonId) {
+                $pokemonDetails = $this->api->fetch("/pokemon/{$pokemonId}");
 
-        try {
-            $offset = 0;
-            $limit = 50;
+                $pokemon = $this->createPokemon($pokemonDetails);
+                $this->importStats($pokemon, $pokemonDetails);
+                $this->syncTypes($pokemon, $pokemonDetails);
+                $this->syncAbilities($pokemon, $pokemonDetails);
+                $this->syncMoves($pokemon, $pokemonDetails);
+                $this->syncItems($pokemon, $pokemonDetails);
+                $this->importGameIndices($pokemon, $pokemonDetails);
 
-            // Get total count first
-            $initialResponse = $this->api->fetch("/pokemon?limit=1&offset=0");
-            $totalCount = $initialResponse['count'] ?? 0;
+                $this->advanceProgress("Importing pokemon: {$pokemonDetails['name']}");
+            },
+            limit: 50
+        );
 
-            $this->progress->start('pokemon', $totalCount);
-
-            do {
-                $response = $this->api->fetch("/pokemon?limit={$limit}&offset={$offset}");
-                $pokemonList = $response['results'] ?? [];
-
-                if (empty($pokemonList)) {
-                    break;
-                }
-
-                $bar = $this->command->getOutput()->createProgressBar(count($pokemonList));
-                $bar->start();
-
-                foreach ($pokemonList as $pokemonData) {
-                    try {
-                        $pokemonId = $this->api->extractIdFromUrl($pokemonData['url']);
-                        $pokemonDetails = $this->api->fetch("/pokemon/{$pokemonId}");
-
-                        $pokemon = $this->createPokemon($pokemonDetails);
-                        $this->importStats($pokemon, $pokemonDetails);
-                        $this->syncTypes($pokemon, $pokemonDetails);
-                        $this->syncAbilities($pokemon, $pokemonDetails);
-                        $this->syncMoves($pokemon, $pokemonDetails);
-                        $this->syncItems($pokemon, $pokemonDetails);
-                        $this->importGameIndices($pokemon, $pokemonDetails);
-
-                        $this->progress->advance("Importing pokemon: {$pokemonDetails['name']}");
-                        $this->progress->success();
-
-                        $bar->advance();
-                        usleep(100000); // 100ms delay between requests
-                    } catch (\Exception $e) {
-                        $this->command->warn("\nError importing pokemon: " . $e->getMessage());
-                        $this->progress->error($e->getMessage());
-                    }
-                }
-
-                $bar->finish();
-                $this->command->newLine();
-                $offset += $limit;
-
-            } while (!empty($pokemonList));
-
-            $this->command->info("Pokemon imported: " . Pokemon::count());
-            $this->progress->complete('pokemon');
-        } catch (\Exception $e) {
-            $this->command->error('❌ Pokemon import failed: ' . $e->getMessage());
-            $this->progress->error($e->getMessage());
-        }
+        $this->command->info("Pokemon imported: " . Pokemon::count());
     }
 
     private function createPokemon(array $pokemonDetails): Pokemon

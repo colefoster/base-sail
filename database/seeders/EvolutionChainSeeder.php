@@ -5,84 +5,31 @@ namespace Database\Seeders;
 use App\Models\Evolution;
 use App\Models\EvolutionChain;
 use App\Models\PokemonSpecies;
-use App\Services\PokeApiService;
-use App\Services\SeederProgressService;
-use Illuminate\Database\Seeder;
 
-class EvolutionChainSeeder extends Seeder
+class EvolutionChainSeeder extends BasePokeApiSeeder
 {
-    protected PokeApiService $api;
-    protected SeederProgressService $progress;
-
-    public function __construct()
-    {
-        $this->api = app(PokeApiService::class);
-        $this->progress = app(SeederProgressService::class);
-    }
-
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $this->command->info('🔗 Importing Evolution Chains...');
+        $this->importWithPagination(
+            endpoint: '/evolution-chain',
+            progressKey: 'evolution_chains',
+            emoji: '🔗',
+            resourceName: 'Evolution Chains',
+            processItem: function (int $chainId) {
+                $chainDetails = $this->api->fetch("/evolution-chain/{$chainId}");
 
-        try {
-            $offset = 0;
-            $limit = 100;
+                $evolutionChain = EvolutionChain::updateOrCreate(
+                    ['api_id' => $chainDetails['id']],
+                    ['baby_trigger_item' => $chainDetails['baby_trigger_item']['name'] ?? null]
+                );
 
-            // Get total count first
-            $initialResponse = $this->api->fetch("/evolution-chain?limit=1&offset=0");
-            $totalCount = $initialResponse['count'] ?? 0;
+                $this->parseEvolutionChain($evolutionChain, $chainDetails['chain']);
 
-            $this->progress->start('evolution_chains', $totalCount);
+                $this->advanceProgress("Importing evolution chain #{$chainId}");
+            }
+        );
 
-            do {
-                $response = $this->api->fetch("/evolution-chain?limit={$limit}&offset={$offset}");
-                $chains = $response['results'] ?? [];
-
-                if (empty($chains)) {
-                    break;
-                }
-
-                $bar = $this->command->getOutput()->createProgressBar(count($chains));
-                $bar->start();
-
-                foreach ($chains as $chainData) {
-                    try {
-                        $chainId = $this->api->extractIdFromUrl($chainData['url']);
-                        $chainDetails = $this->api->fetch("/evolution-chain/{$chainId}");
-
-                        $evolutionChain = EvolutionChain::updateOrCreate(
-                            ['api_id' => $chainDetails['id']],
-                            ['baby_trigger_item' => $chainDetails['baby_trigger_item']['name'] ?? null]
-                        );
-
-                        $this->parseEvolutionChain($evolutionChain, $chainDetails['chain']);
-
-                        $this->progress->advance("Importing evolution chain #{$chainId}");
-                        $this->progress->success();
-
-                        $bar->advance();
-                        usleep(100000); // 100ms delay between requests
-                    } catch (\Exception $e) {
-                        $this->command->warn("\nError importing evolution chain: " . $e->getMessage());
-                        $this->progress->error($e->getMessage());
-                    }
-                }
-
-                $bar->finish();
-                $this->command->newLine();
-                $offset += $limit;
-
-            } while (!empty($chains));
-
-            $this->command->info("Evolution Chains imported: " . EvolutionChain::count());
-            $this->progress->complete('evolution_chains');
-        } catch (\Exception $e) {
-            $this->command->error('❌ Evolution Chain import failed: ' . $e->getMessage());
-            $this->progress->error($e->getMessage());
-        }
+        $this->command->info("Evolution Chains imported: " . EvolutionChain::count());
     }
 
     private function parseEvolutionChain(EvolutionChain $evolutionChain, array $chainNode, ?int $fromSpeciesId = null): void
