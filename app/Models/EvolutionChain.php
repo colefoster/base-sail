@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EvolutionChain extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'api_id',
         'baby_trigger_item',
