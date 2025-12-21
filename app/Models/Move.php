@@ -69,6 +69,11 @@ class Move extends Model
         });
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'api_id';
+    }
+
     public function type(): BelongsTo
     {
         return $this->belongsTo(Type::class);

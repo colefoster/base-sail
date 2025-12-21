@@ -29,9 +29,7 @@ class EvolutionsSection
 
                 ImageEntry::make('stage_1_sprite')
                     ->label(fn ($record) => $record->getEvolutionChainData()['stage_1_name'])
-
                     ->state(fn($record) => $record->getEvolutionChainData()['stage_1_sprite'] ?? null)
-                    #TODO: Fix URL generation for forms, uses bad ID currently
                     ->url(fn($record) => '/pokemon/' . $record->getEvolutionChainData()['stage_1_api_id'])
                     ->defaultImageUrl(url('/images/sprite-placeholder.png')),
 

@@ -70,6 +70,11 @@ class Pokemon extends Model
         });
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'api_id';
+    }
+
     public function species(): BelongsTo
     {
         return $this->belongsTo(PokemonSpecies::class, 'species_id');

@@ -34,6 +34,11 @@ class Ability extends Model
         });
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'api_id';
+    }
+
     public function pokemon(): BelongsToMany
     {
         return $this->belongsToMany(Pokemon::class, 'ability_pokemon')

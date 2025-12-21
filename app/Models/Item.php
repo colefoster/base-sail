@@ -37,6 +37,11 @@ class Item extends Model
         });
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'api_id';
+    }
+
     public function pokemon(): BelongsToMany
     {
         return $this->belongsToMany(Pokemon::class, 'pokemon_item')
