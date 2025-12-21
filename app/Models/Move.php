@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -61,6 +62,48 @@ class Move extends Model
         'flinch_chance' => 'integer',
         'stat_chance' => 'integer',
     ];
+
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => ucwords(str_replace('-', ' ', $value)),
+        );
+    }
+
+    protected function damageClass(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => ucwords(str_replace('-', ' ', $value)),
+        );
+    }
+
+    protected function contestType(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => ucwords(str_replace('-', ' ', $value)),
+        );
+    }
+
+    protected function target(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => ucwords(str_replace('-', ' ', $value)),
+        );
+    }
+
+    protected function ailment(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => ucwords(str_replace('-', ' ', $value)),
+        );
+    }
+
+    protected function metaCategory(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => ucwords(str_replace('-', ' ', $value)),
+        );
+    }
 
     protected static function booted(): void
     {

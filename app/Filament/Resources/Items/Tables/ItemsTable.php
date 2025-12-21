@@ -26,7 +26,9 @@ class ItemsTable
             ->columns([
                 TextColumn::make('api_id')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                ->toggleable()
+                ->hidden(),
                 TextColumn::make('name')
                     ->searchable(),
                 ImageColumn::make('sprite'),
@@ -35,7 +37,6 @@ class ItemsTable
                     ->money()
                     ->sortable(),
                 TextColumn::make('category')
-                    ->formatStateUsing(fn ($state) => ucwords(str_replace('-', ' ', ($state))))
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()

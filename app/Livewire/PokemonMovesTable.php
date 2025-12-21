@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Filament\Resources\Moves\MoveResource;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -40,7 +41,7 @@ class PokemonMovesTable extends Component implements HasForms, HasTable, HasActi
                     ->searchable()
                     ->sortable()
                     ->formatStateUsing(fn($state) => ucwords(str_replace('-', ' ', $state)))
-                    ->url(fn($record) => "/moves/" . $record->api_id),
+                    ->url(fn($record) => MoveResource::getUrl('view', ['record' => $record])),
                 TextColumn::make('type.name')
                     ->label('Type')
                     ->badge()
