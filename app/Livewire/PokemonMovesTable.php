@@ -85,8 +85,8 @@ class PokemonMovesTable extends Component implements HasForms, HasTable, HasActi
             ])
             ->filters([
                 MoveTypeFilter::make(3, $this->pokemon),
-                MoveClassFilter::make(3),
-                LearnMethodFilter::make(2, $this->pokemon),
+                MoveClassFilter::make(),
+                LearnMethodFilter::make(columns:3, pokemon:$this->pokemon),
             ])
             ->defaultSort('name')
             ->paginated([10, 25, 50, 100]);
