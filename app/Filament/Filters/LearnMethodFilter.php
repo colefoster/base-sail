@@ -67,10 +67,10 @@ class LearnMethodFilter
             'xd-purification' => 'XD Purification',
             'form-change' => 'Form Change',
         ];
-
         $toggleButtons = ToggleButtons::make('learn_methods')
             ->label('Learn Method')
             ->options(function () use ($pokemon, $allMethods) {
+
                 // If Pokemon is provided, only show learn methods that exist in their move pool
                 if ($pokemon) {
                     $availableMethods = \Illuminate\Support\Facades\DB::table('move_pokemon')
