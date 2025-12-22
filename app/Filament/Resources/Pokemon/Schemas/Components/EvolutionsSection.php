@@ -27,6 +27,7 @@ class EvolutionsSection
                 'md' => $record->getEvolutionChainData()['stage_count'] + round($record->getEvolutionChainData()['stage_count'] / 2),
                 'lg' => $record->getEvolutionChainData()['stage_count'] + round($record->getEvolutionChainData()['stage_count'] / 2),
             ])
+            ->extraAttributes(['style' => ''])
             ->schema([
                 // Stage 1
 
@@ -41,13 +42,15 @@ class EvolutionsSection
                             'lg' => 1,
                         ]
                     )
+                    ->extraAttributes(['style' => ''])
                     ->schema([
                         TextEntry::make('stage_1_label')
                             ->hiddenLabel()
                             ->default(fn($record) => $record->getEvolutionChainData()['stage_1_name'])
                             ->size(TextSize::Large)
-                            ->color('primary')
-                            ->alignCenter(),
+                            ->color('info')
+                            ->alignCenter()
+                            ->extraEntryWrapperAttributes(['style' => '']),
 
                         ImageEntry::make('stage_1_sprite')
                             ->hiddenLabel()
@@ -56,7 +59,8 @@ class EvolutionsSection
                                 'record' => Pokemon::where('api_id', $record->getEvolutionChainData()['stage_1_api_id'])->first()
                             ]))
                             ->alignCenter()
-                            ->defaultImageUrl(url('/images/sprite-placeholder.png')),
+                            ->defaultImageUrl(url('/images/sprite-placeholder.png'))
+                            ->extraEntryWrapperAttributes(['style' => '']),
                     ]),
 
                 TextEntry::make('stage_1_method')
@@ -67,7 +71,7 @@ class EvolutionsSection
                     ->alignCenter()
                     ->size(TextSize::Large)
                     ->color('info')
-                    ->extraEntryWrapperAttributes(['style' => 'display: flex; align-items: center; justify-content: center; height: 100%;']),
+                    ->extraEntryWrapperAttributes(['style' => '']),
 
                 Fieldset::make('stage_2_fieldset')
                     ->contained(false)
@@ -81,13 +85,15 @@ class EvolutionsSection
                             'lg' => 1,
                         ]
                     )
+                    ->extraAttributes(['style' => ''])
                     ->schema([
                         TextEntry::make('stage_2_label')
                             ->default(fn($record) => $record->getEvolutionChainData()['stage_2_name'])
                             ->hiddenLabel()
                             ->size(TextSize::Large)
-                            ->color('primary')
-                            ->alignCenter(),
+                            ->color('info')
+                            ->alignCenter()
+                            ->extraEntryWrapperAttributes(['style' => '']),
                         ImageEntry::make('stage_2_sprite')
                             ->hiddenLabel()
                             ->hidden(fn($record) => ($record->getEvolutionChainData()['stage_count'] ?? 0) < 2)
@@ -97,6 +103,7 @@ class EvolutionsSection
                             ]))
                             ->alignCenter()
                             ->defaultImageUrl(url('/images/sprite-placeholder.png'))
+                            ->extraEntryWrapperAttributes(['style' => '']),
 
                     ]),
 
@@ -108,7 +115,7 @@ class EvolutionsSection
                     ->size(TextSize::Large)
                     ->color('info')
                     ->alignCenter()
-                    ->extraEntryWrapperAttributes(['style' => 'display: flex; align-items: center; justify-content: center; height: 100%;']),
+                    ->extraEntryWrapperAttributes(['style' => '']),
 
                 Fieldset::make('stage_3_fieldset')
                     ->contained(false)
@@ -122,13 +129,15 @@ class EvolutionsSection
                             'lg' => 1,
                         ]
                     )
+                    ->extraAttributes(['style' => ''])
                     ->schema([
                         TextEntry::make('stage_3_label')
                             ->hiddenLabel()
                             ->default(fn($record) => $record->getEvolutionChainData()['stage_3_name'])
                             ->size(TextSize::Large)
-                            ->color('primary')
-                            ->alignCenter(),
+                            ->color('info')
+                            ->alignCenter()
+                            ->extraEntryWrapperAttributes(['style' => '']),
 
                         ImageEntry::make('stage_3_sprite')
                             ->hiddenLabel()
@@ -138,7 +147,8 @@ class EvolutionsSection
                                 'record' => Pokemon::where('api_id', $record->getEvolutionChainData()['stage_3_api_id'])->first()
                             ]))
                             ->alignCenter()
-                            ->defaultImageUrl(url('/images/sprite-placeholder.png')),
+                            ->defaultImageUrl(url('/images/sprite-placeholder.png'))
+                            ->extraEntryWrapperAttributes(['style' => '']),
                     ]),
 
             ]);

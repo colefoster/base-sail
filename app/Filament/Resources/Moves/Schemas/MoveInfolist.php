@@ -4,7 +4,8 @@ namespace App\Filament\Resources\Moves\Schemas;
 
 use App\Filament\Resources\Moves\Schemas\Components\MoveDescriptionSection;
 use App\Filament\Resources\Moves\Schemas\Components\MoveDetailsSection;
-use App\Filament\Resources\Moves\Schemas\Components\LearnedByPokemonSection;
+use App\Livewire\MovePokemonTable;
+use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Schema;
 
 class MoveInfolist
@@ -17,7 +18,7 @@ class MoveInfolist
                     ->columnSpanFull(),
                 MoveDescriptionSection::make()
                     ->columnSpanFull(),
-                LearnedByPokemonSection::make()
+                Livewire::make(MovePokemonTable::class, fn($record) => ['move' => $record])
                     ->columnSpanFull(),
             ]);
     }

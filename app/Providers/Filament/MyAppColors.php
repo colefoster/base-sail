@@ -9,7 +9,7 @@ class MyAppColors
     public static function loadAppColors(): array
     {
         return [
-            'primary' => Color::Fuchsia,
+            'primary' => Color::Sky,
 
             'physical' => '#eb5628',
             'Physical' => '#eb5628',
