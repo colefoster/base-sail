@@ -71,7 +71,8 @@ class EvolutionsSection
                     ->alignCenter()
                     ->size(TextSize::Large)
                     ->color('info')
-                    ->extraEntryWrapperAttributes(['style' => '']),
+                    ->extraEntryWrapperAttributes(['style' => 'margin-top: 1rem;'])
+                    ->extraAttributes(['style' => 'max-width: 100%; white-space: normal; word-wrap: break-word;']),
 
                 Fieldset::make('stage_2_fieldset')
                     ->contained(false)

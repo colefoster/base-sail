@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\Pokemon;
 use App\Providers\Filament\MyAppColors;
+use Filament\Support\RawJs;
 use Filament\Widgets\ChartWidget;
 
 class PokemonStatsRadarChart extends ChartWidget
@@ -58,39 +59,42 @@ class PokemonStatsRadarChart extends ChartWidget
         return 'radar';
     }
 
-    protected function getOptions(): array
+    protected function getOptions(): RawJs
     {
-        return [
-            'scales' => [
-                'r' => [
-                    'beginAtZero' => true,
-                    'min' => 0,
-                    'max' => 200,
-                    'ticks' => [
-                        'stepSize' => 100,
-                        'display' => false,
-                    ],
-                    'grid' => [
-                        'lineWidth' => 1,
-                    ],
-                    'angleLines' => [
-                        'lineWidth' => 1,
-                    ],
-                    'pointLabels' => [
-                        'font' => [
-                            'size' => 12,
-                            'weight' => 500,
-                        ],
-                    ],
-                ],
-            ],
-            'plugins' => [
-                'legend' => [
-                    'display' => false,
-                ],
-            ],
-            'maintainAspectRatio' => true,
-        ];
+        return RawJs::make(<<<JS
+        {
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    min: 0,
+                    max: 200,
+                    ticks: {
+                        stepSize: 100,
+                        display: false,
+                    },
+                    grid: {
+                        color: '#FF0000',
+                    },
+                    angleLines: {
+                        color: '#FF00FF',
+                    },
+                    pointLabels: {
+                        color: '#00FF00',
+                        font: {
+                            size: 12,
+                            weight: 500,
+                        },
+                    },
+                },
+            },
+            plugins: {
+                legend: {
+                    display: false,
+                },
+            },
+            maintainAspectRatio: true,
+        }
+        JS);
     }
 
     protected function getTypeColor(): string

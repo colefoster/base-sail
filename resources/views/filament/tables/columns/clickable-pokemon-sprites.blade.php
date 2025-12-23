@@ -14,7 +14,6 @@
                 src="{{ $poke['sprite'] }}"
                 alt="{{ $poke['name'] }}"
                 class="rounded-full ring-2 ring-white dark:ring-gray-900"
-                style="height: 72px; width: 72px; image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;"
             />
         </a>
     @endforeach

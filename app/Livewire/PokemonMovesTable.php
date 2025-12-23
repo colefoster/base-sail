@@ -36,6 +36,9 @@ class PokemonMovesTable extends Component implements HasForms, HasTable, HasActi
             ->query(
                 $this->pokemon->moves()
                     ->withPivot('learn_method', 'level_learned_at')
+                    ->orderByRaw("CASE WHEN move_pokemon.learn_method = 'level-up' THEN 0 ELSE 1 END")
+                    ->orderBy('move_pokemon.level_learned_at', 'asc')
+                    ->orderBy('moves.name', 'asc')
                     ->getQuery()
             )
             ->columns([
@@ -88,7 +91,6 @@ class PokemonMovesTable extends Component implements HasForms, HasTable, HasActi
                 MoveClassFilter::make(),
                 LearnMethodFilter::make(columns:3, pokemon:$this->pokemon),
             ])
-            ->defaultSort('name')
             ->paginated([10, 25, 50, 100]);
     }
 

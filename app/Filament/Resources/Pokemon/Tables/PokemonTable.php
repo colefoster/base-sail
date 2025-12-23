@@ -44,7 +44,7 @@ class PokemonTable
                         ->toggleable()
                         ->extraImgAttributes([
                             'class' => 'pixelated',
-                            'style' => 'image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;',
+                          //  'style' => 'image-rendering: pixelated; image-rendering: -moz-crisp-edges; image-rendering: crisp-edges;',
                         ])
                         ->alignCenter(),
                     TextColumn::make('types.name')
