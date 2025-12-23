@@ -83,7 +83,6 @@ COPY .docker/supervisor/supervisord.conf /etc/supervisord.conf
 
 # Copy PHP-FPM configuration
 COPY .docker/php/php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
-COPY .docker/php/php.ini /usr/local/etc/php/conf.d/99-custom.ini
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
