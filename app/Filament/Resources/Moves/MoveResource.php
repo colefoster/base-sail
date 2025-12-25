@@ -21,8 +21,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class MoveResource extends Resource
 {
     protected static ?string $model = Move::class;
+    protected static string|BackedEnum|null $navigationIcon = "css-pokemon";
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
     protected static string|null|\UnitEnum $navigationGroup = 'Data';
 
     protected static ?string $recordTitleAttribute = 'name';

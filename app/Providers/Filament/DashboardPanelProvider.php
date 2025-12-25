@@ -30,7 +30,8 @@ class DashboardPanelProvider extends PanelProvider
             ->id('admin')
             ->path('')
             ->login(Login::class)
-            ->favicon(asset('/images/pokeball.png'))
+            ->favicon(asset('/images/special-ball-96.png'))
+            ->brandName("Pokémon Database")->sidebarCollapsibleOnDesktop()
             ->colors(
                 MyAppColors::loadAppColors(),
             )

@@ -25,7 +25,7 @@ class PokemonResource extends Resource
     protected static string|null|\UnitEnum $navigationGroup = 'Data';
     protected static ?int $navigationSort = -2;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = "css-pokemon";
 
     protected static ?string $recordTitleAttribute = 'name';
 
