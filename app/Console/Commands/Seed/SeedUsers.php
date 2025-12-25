@@ -40,7 +40,7 @@ class SeedUsers extends Command
                         'name' => 'Guest',
                         'password' => 'password',
                         'email' => 'guest@example.com',
-                        'is_admin' => true,
+                        'is_admin' => false,
                     ]);
                 }
             }
