@@ -1,11 +1,19 @@
 <x-filament-panels::page>
-    <div class="space-y-6">
-        <div class="text-sm text-gray-600 dark:text-gray-400">
-            Administrative tools for managing Pokemon data imports and API testing.
-        </div>
+    <x-filament::tabs wire:model="activeTab">
+        @foreach ($this->getTabs() as $tabKey => $tab)
+            <x-filament::tabs.item
+                :alpine-active="'$wire.activeTab === \'' . $tabKey . '\''"
+                :wire:click="'$set(\'activeTab\', \'' . $tabKey . '\')'"
+                :icon="$tab['icon']"
+            >
+                {{ $tab['label'] }}
+            </x-filament::tabs.item>
+        @endforeach
+    </x-filament::tabs>
 
-        @foreach ($this->getWidgets() as $widget)
-            @livewire($widget)
+    <div class="mt-6">
+        @foreach ($this->getVisibleWidgets() as $widget)
+            @livewire($widget, key($widget . '-' . $activeTab))
         @endforeach
     </div>
 </x-filament-panels::page>

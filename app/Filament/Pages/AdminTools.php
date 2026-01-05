@@ -18,22 +18,34 @@ class AdminTools extends Page
 
     protected static ?int $navigationSort = 100;
 
+    public string $activeTab = 'data-importer';
+
     public static function canAccess(): bool
     {
         // Only admins can access this page
         return auth()->user()?->is_admin ?? false;
     }
 
-    protected function getHeaderWidgets(): array
+    public function getTabs(): array
     {
         return [
-            RunSeedersWidget::class,
-            ApiQueryWidget::class,
+            'data-importer' => [
+                'label' => 'Data Importer',
+                'icon' => 'heroicon-o-arrow-down-tray',
+            ],
+            'api-query' => [
+                'label' => 'API Tester',
+                'icon' => 'heroicon-o-beaker',
+            ],
         ];
     }
 
-    public function getWidgets(): array
+    public function getVisibleWidgets(): array
     {
-        return $this->getHeaderWidgets();
+        return match($this->activeTab) {
+            'data-importer' => [RunSeedersWidget::class],
+            'api-query' => [ApiQueryWidget::class],
+            default => [RunSeedersWidget::class],
+        };
     }
 }
