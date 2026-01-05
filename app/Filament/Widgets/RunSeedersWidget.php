@@ -40,7 +40,8 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
 
     public static function canView(): bool
     {
-        return auth()->user()?->is_admin ?? false;
+        //return auth()->user()?->is_admin ?? false;
+        return true;
     }
 
     public bool $isImporting = false;

@@ -40,12 +40,12 @@ class DashboardPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
-            //->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
-            ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
-                DatabaseStatsOverview::class,
-            ])
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
+//            ->widgets([
+//                AccountWidget::class,
+//                FilamentInfoWidget::class,
+//                DatabaseStatsOverview::class,
+//            ])
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
             ->middleware([
                 EncryptCookies::class,
