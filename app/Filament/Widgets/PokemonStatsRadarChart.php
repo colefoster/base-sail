@@ -15,6 +15,13 @@ class PokemonStatsRadarChart extends ChartWidget
 
     public ?Pokemon $record = null;
 
+    public static function canView(): bool
+    {
+        // This widget is only meant to be used within resource pages with a record
+        // The Livewire component version is used in Pokemon pages
+        return false;
+    }
+
     protected function getData(): array
     {
         if (! $this->record) {

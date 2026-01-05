@@ -38,7 +38,8 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
 
     public static function canView(): bool
     {
-        return true;
+        // Only show on Admin Tools page, not on dashboard
+        return false;
     }
 
     protected function getHeaderActions(): array
