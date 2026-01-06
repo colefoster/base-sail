@@ -34,6 +34,7 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
     public ?int $statusCode = null;
     public ?string $statusText = null;
     public ?array $responseHeaders = null;
+    public ?array $keyStructure = null;
 
     public static function canView(): bool
     {
@@ -131,6 +132,7 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
                                 $this->statusCode = null;
                                 $this->statusText = null;
                                 $this->responseHeaders = null;
+                                $this->keyStructure = null;
                                 Notification::make()
                                     ->title('Response Cleared')
                                     ->success()
@@ -153,6 +155,40 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
     protected function getFormStatePath(): string
     {
         return 'data';
+    }
+
+    /**
+     * Extract keys from nested array/object structure
+     */
+    protected function extractKeys($data, int $maxDepth = 2, int $currentDepth = 0): array
+    {
+        $keys = [];
+
+        if (!is_array($data) || $currentDepth >= $maxDepth) {
+            return $keys;
+        }
+
+        // If it's a list (numeric array), get keys from first item
+        if (array_is_list($data)) {
+            if (!empty($data) && is_array($data[0])) {
+                return $this->extractKeys($data[0], $maxDepth, $currentDepth);
+            }
+            return $keys;
+        }
+
+        // Extract keys from associative array
+        foreach ($data as $key => $value) {
+            $keys[$key] = [];
+
+            if (is_array($value)) {
+                $subKeys = $this->extractKeys($value, $maxDepth, $currentDepth + 1);
+                if (!empty($subKeys)) {
+                    $keys[$key] = $subKeys;
+                }
+            }
+        }
+
+        return $keys;
     }
 
     public function executeQuery(): void
@@ -204,8 +240,16 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
             // If not JSON, use raw body
             if ($body === null) {
                 $this->responseBody = $response->body();
+                $this->keyStructure = null;
             } else {
                 $this->responseBody = json_encode($body, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+                // Extract keys structure from JSON body
+                if (is_array($body)) {
+                    $this->keyStructure = $this->extractKeys($body);
+                } else {
+                    $this->keyStructure = null;
+                }
             }
 
             Notification::make()
