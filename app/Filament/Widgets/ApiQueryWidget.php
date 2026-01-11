@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -16,6 +17,8 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Str;
 
 class ApiQueryWidget extends Widget implements HasForms, HasActions
 {
@@ -76,11 +79,29 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
                                 ->columnSpan(3),
                         ]),
 
-                    Textarea::make('headers')
-                        ->label('Headers (JSON)')
-                        ->placeholder('{"Authorization": "Bearer token", "Content-Type": "application/json"}')
-                        ->rows(3)
-                        ->helperText('Optional: Enter headers as JSON object')
+                    Repeater::make('headers')
+                        ->label('Headers')
+                        ->schema([
+                            Grid::make(2)
+                                ->schema([
+                                    TextInput::make('key')
+                                        ->label('Header Name')
+                                        ->placeholder('Content-Type')
+                                        ->required()
+                                        ->columnSpan(1),
+
+                                    TextInput::make('value')
+                                        ->label('Header Value')
+                                        ->placeholder('application/json')
+                                        ->required()
+                                        ->columnSpan(1),
+                                ]),
+                        ])
+                        ->collapsible()
+                        ->collapsed()
+                        ->itemLabel(fn (array $state): ?string => $state['key'] ?? null)
+                        ->addActionLabel('Add Header')
+                        ->defaultItems(0)
                         ->columnSpanFull(),
 
                     Textarea::make('body')
@@ -115,6 +136,14 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
                                     ->success()
                                     ->send();
                             }),
+
+                        Action::make('downloadSqlite')
+                            ->label('Download SQLite DB')
+                            ->icon('heroicon-o-arrow-down-tray')
+                            ->color('success')
+                            ->action(function () {
+                                return $this->generateAndDownloadSqlite();
+                            }),
                     ])
                     ->alignEnd(),
                 ]),
@@ -133,12 +162,11 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
         try {
             // Parse headers if provided
             $headers = [];
-            if (!empty($data['headers'])) {
-                $headersArray = json_decode($data['headers'], true);
-                if (json_last_error() === JSON_ERROR_NONE) {
-                    $headers = $headersArray;
-                } else {
-                    throw new \Exception('Invalid JSON in headers');
+            if (!empty($data['headers']) && is_array($data['headers'])) {
+                foreach ($data['headers'] as $header) {
+                    if (!empty($header['key']) && !empty($header['value'])) {
+                        $headers[$header['key']] = $header['value'];
+                    }
                 }
             }
 
@@ -196,6 +224,68 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
                 ->danger()
                 ->body($e->getMessage())
                 ->send();
+        }
+    }
+
+    public function generateAndDownloadSqlite()
+    {
+        try {
+            // Create a temporary file for the SQLite database
+            $tempFile = tempnam(sys_get_temp_dir(), 'sample_db_') . '.sqlite';
+
+            // Create SQLite database connection
+            $pdo = new \PDO('sqlite:' . $tempFile);
+            $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+            // Create a simple table
+            $pdo->exec('
+                CREATE TABLE IF NOT EXISTS sample_data (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    value TEXT,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+            ');
+
+            // Insert some sample data
+            $stmt = $pdo->prepare('INSERT INTO sample_data (name, value) VALUES (?, ?)');
+            $sampleData = [
+                ['Example 1', 'Sample value 1'],
+                ['Example 2', 'Sample value 2'],
+                ['Example 3', 'Sample value 3'],
+            ];
+
+            foreach ($sampleData as $row) {
+                $stmt->execute($row);
+            }
+
+            // Close the database connection
+            $pdo = null;
+
+            // Generate filename with timestamp
+            $filename = 'sample_database_' . date('Y-m-d_His') . '.sqlite';
+
+            // Create download response
+            $response = Response::download($tempFile, $filename, [
+                'Content-Type' => 'application/x-sqlite3',
+            ])->deleteFileAfterSend(true);
+
+            Notification::make()
+                ->title('Database Generated')
+                ->success()
+                ->body('SQLite database has been generated and download started.')
+                ->send();
+
+            return $response;
+
+        } catch (\Exception $e) {
+            Notification::make()
+                ->title('Generation Failed')
+                ->danger()
+                ->body('Error generating SQLite database: ' . $e->getMessage())
+                ->send();
+
+            return null;
         }
     }
 }
