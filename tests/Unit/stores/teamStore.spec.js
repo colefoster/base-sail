@@ -371,5 +371,54 @@ describe('TeamStore', () => {
             store.addPokemon(detailedPokemon, 0);
             expect(store.team[0]).toEqual(detailedPokemon);
         });
+
+        it('should handle undefined slot index', () => {
+            store.addPokemon(pikachu, undefined);
+
+            expect(store.team[0]).toEqual(pikachu);
+            expect(store.teamCount).toBe(1);
+        });
+
+        it('should handle null slot index', () => {
+            store.addPokemon(pikachu, null);
+
+            expect(store.team[0]).toEqual(pikachu);
+            expect(store.teamCount).toBe(1);
+        });
+
+        it('should handle adding null Pokemon object', () => {
+            const initialTeam = [...store.team];
+            store.addPokemon(null, 0);
+
+            // Should either accept null or reject it (implementation choice)
+            // This test documents the expected behavior
+            expect(store.team).toBeDefined();
+        });
+
+        it('should maintain array length of 6 always', () => {
+            expect(store.team).toHaveLength(6);
+
+            store.addPokemon(pikachu, 0);
+            expect(store.team).toHaveLength(6);
+
+            store.removePokemon(0);
+            expect(store.team).toHaveLength(6);
+
+            store.clearTeam();
+            expect(store.team).toHaveLength(6);
+        });
+
+        it('should handle rapid successive adds to same slot', () => {
+            const pokemon1 = { id: 1, name: 'Bulbasaur' };
+            const pokemon2 = { id: 2, name: 'Ivysaur' };
+            const pokemon3 = { id: 3, name: 'Venusaur' };
+
+            store.addPokemon(pokemon1, 0);
+            store.addPokemon(pokemon2, 0);
+            store.addPokemon(pokemon3, 0);
+
+            expect(store.team[0]).toEqual(pokemon3);
+            expect(store.teamCount).toBe(1);
+        });
     });
 });

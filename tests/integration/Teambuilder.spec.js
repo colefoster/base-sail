@@ -586,4 +586,309 @@ describe('Teambuilder Integration', () => {
             expect(modal.attributes('aria-modal')).toBe('true');
         });
     });
+
+    describe('Search Functionality', () => {
+        it('should filter Pokemon by name', async () => {
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    availablePokemon: [pikachu, bulbasaur, charizard]
+                }
+            });
+
+            const addButton = wrapper.find('[data-test="team-slot"] button');
+            await addButton.trigger('click');
+
+            const searchInput = wrapper.find('[data-test="search-input"]');
+            await searchInput.setValue('pika');
+
+            const pikachuCard = wrapper.find('[data-test="pokemon-card-25"]');
+            const bulbasaurCard = wrapper.find('[data-test="pokemon-card-1"]');
+
+            expect(pikachuCard.exists()).toBe(true);
+            expect(bulbasaurCard.exists()).toBe(false);
+        });
+
+        it('should be case-insensitive', async () => {
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    availablePokemon: [pikachu, bulbasaur]
+                }
+            });
+
+            const addButton = wrapper.find('[data-test="team-slot"] button');
+            await addButton.trigger('click');
+
+            const searchInput = wrapper.find('[data-test="search-input"]');
+            await searchInput.setValue('PIKA');
+
+            const pikachuCard = wrapper.find('[data-test="pokemon-card-25"]');
+            expect(pikachuCard.exists()).toBe(true);
+        });
+
+        it('should clear results when no matches', async () => {
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    availablePokemon: [pikachu, bulbasaur]
+                }
+            });
+
+            const addButton = wrapper.find('[data-test="team-slot"] button');
+            await addButton.trigger('click');
+
+            const searchInput = wrapper.find('[data-test="search-input"]');
+            await searchInput.setValue('mewtwo');
+
+            expect(wrapper.text()).toContain('No Pokemon found matching your search');
+        });
+
+        it('should update results as user types', async () => {
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    availablePokemon: [pikachu, bulbasaur, charizard]
+                }
+            });
+
+            const addButton = wrapper.find('[data-test="team-slot"] button');
+            await addButton.trigger('click');
+
+            const searchInput = wrapper.find('[data-test="search-input"]');
+
+            await searchInput.setValue('b');
+            expect(wrapper.find('[data-test="pokemon-card-1"]').exists()).toBe(true);
+
+            await searchInput.setValue('bu');
+            expect(wrapper.find('[data-test="pokemon-card-1"]').exists()).toBe(true);
+
+            await searchInput.setValue('bulb');
+            expect(wrapper.find('[data-test="pokemon-card-1"]').exists()).toBe(true);
+            expect(wrapper.find('[data-test="pokemon-card-25"]').exists()).toBe(false);
+        });
+
+        it('should maintain search when reopening selector', async () => {
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    availablePokemon: [pikachu, bulbasaur]
+                }
+            });
+
+            const addButton = wrapper.find('[data-test="team-slot"] button');
+            await addButton.trigger('click');
+
+            const searchInput = wrapper.find('[data-test="search-input"]');
+            await searchInput.setValue('pika');
+
+            const cancelButton = wrapper.find('[data-test="cancel-button"]');
+            await cancelButton.trigger('click');
+
+            // Reopen
+            await addButton.trigger('click');
+
+            // Search should be cleared
+            const newSearchInput = wrapper.find('[data-test="search-input"]');
+            expect(newSearchInput.element.value).toBe('');
+        });
+    });
+
+    describe('Pagination', () => {
+        it('should show pagination controls when multiple pages', async () => {
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    availablePokemon: [pikachu],
+                    totalPages: 3
+                }
+            });
+
+            const addButton = wrapper.find('[data-test="team-slot"] button');
+            await addButton.trigger('click');
+
+            expect(wrapper.find('[data-test="pagination"]').exists()).toBe(true);
+        });
+
+        it('should disable Previous on first page', async () => {
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    availablePokemon: [pikachu],
+                    currentPage: 1,
+                    totalPages: 3
+                }
+            });
+
+            const addButton = wrapper.find('[data-test="team-slot"] button');
+            await addButton.trigger('click');
+
+            const prevButton = wrapper.find('[data-test="prev-page"]');
+            expect(prevButton.attributes('disabled')).toBeDefined();
+        });
+
+        it('should disable Next on last page', async () => {
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    availablePokemon: [pikachu],
+                    currentPage: 3,
+                    totalPages: 3
+                }
+            });
+
+            const addButton = wrapper.find('[data-test="team-slot"] button');
+            await addButton.trigger('click');
+
+            const nextButton = wrapper.find('[data-test="next-page"]');
+            expect(nextButton.attributes('disabled')).toBeDefined();
+        });
+
+        it('should emit page change event when Next clicked', async () => {
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    availablePokemon: [pikachu],
+                    currentPage: 1,
+                    totalPages: 3
+                }
+            });
+
+            const addButton = wrapper.find('[data-test="team-slot"] button');
+            await addButton.trigger('click');
+
+            const nextButton = wrapper.find('[data-test="next-page"]');
+            await nextButton.trigger('click');
+
+            expect(wrapper.emitted('page-change')).toBeTruthy();
+        });
+    });
+
+    describe('Loading and Error States', () => {
+        it('should show loading indicator', () => {
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    loading: true
+                }
+            });
+
+            const addButton = wrapper.find('[data-test="team-slot"] button');
+            addButton.trigger('click');
+
+            expect(wrapper.text()).toContain('Loading Pokemon');
+        });
+
+        it('should show error message', () => {
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    error: 'Failed to load Pokemon'
+                }
+            });
+
+            const addButton = wrapper.find('[data-test="team-slot"] button');
+            addButton.trigger('click');
+
+            expect(wrapper.text()).toContain('Failed to load Pokemon');
+        });
+
+        it('should show retry button on error', () => {
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    error: 'Failed to load Pokemon'
+                }
+            });
+
+            const addButton = wrapper.find('[data-test="team-slot"] button');
+            addButton.trigger('click');
+
+            const retryButton = wrapper.find('[data-test="retry-button"]');
+            expect(retryButton.exists()).toBe(true);
+        });
+
+        it('should emit retry event when retry clicked', async () => {
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    error: 'Failed to load Pokemon'
+                }
+            });
+
+            const addButton = wrapper.find('[data-test="team-slot"] button');
+            await addButton.trigger('click');
+
+            const retryButton = wrapper.find('[data-test="retry-button"]');
+            await retryButton.trigger('click');
+
+            expect(wrapper.emitted('retry')).toBeTruthy();
+        });
+    });
+
+    describe('Complex User Workflows', () => {
+        it('should handle complete team building workflow', async () => {
+            const allPokemon = [pikachu, bulbasaur, charizard];
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    availablePokemon: allPokemon
+                }
+            });
+
+            // Add first Pokemon
+            const slots = wrapper.findAll('[data-test="team-slot"]');
+            await slots[0].find('button').trigger('click');
+            await wrapper.find('[data-test="pokemon-card-25"]').trigger('click');
+
+            expect(store.teamCount).toBe(1);
+
+            // Add second Pokemon
+            await slots[1].find('button').trigger('click');
+            await wrapper.find('[data-test="pokemon-card-1"]').trigger('click');
+
+            expect(store.teamCount).toBe(2);
+
+            // Remove first Pokemon
+            await wrapper.find('[data-test="remove-button"]').trigger('click');
+
+            expect(store.teamCount).toBe(1);
+
+            // Add different Pokemon to first slot
+            await slots[0].find('button').trigger('click');
+            await wrapper.find('[data-test="pokemon-card-6"]').trigger('click');
+
+            expect(store.teamCount).toBe(2);
+            expect(store.team[0]).toEqual(charizard);
+            expect(store.team[1]).toEqual(bulbasaur);
+        });
+
+        it('should prevent adding same Pokemon twice', async () => {
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    availablePokemon: [pikachu, bulbasaur]
+                }
+            });
+
+            // Add Pikachu to slot 0
+            const slots = wrapper.findAll('[data-test="team-slot"]');
+            await slots[0].find('button').trigger('click');
+            await wrapper.find('[data-test="pokemon-card-25"]').trigger('click');
+
+            // Try to add Pikachu to slot 1
+            await slots[1].find('button').trigger('click');
+
+            // Pikachu should not be available
+            expect(wrapper.find('[data-test="pokemon-card-25"]').exists()).toBe(false);
+        });
+
+        it('should handle replacing Pokemon in slot', async () => {
+            const wrapper = mount(Teambuilder, {
+                props: {
+                    availablePokemon: [pikachu, bulbasaur, charizard]
+                }
+            });
+
+            // Add Pikachu
+            const slots = wrapper.findAll('[data-test="team-slot"]');
+            await slots[0].find('button').trigger('click');
+            await wrapper.find('[data-test="pokemon-card-25"]').trigger('click');
+
+            expect(store.team[0]).toEqual(pikachu);
+
+            // Remove and replace with Bulbasaur
+            await wrapper.find('[data-test="remove-button"]').trigger('click');
+            await slots[0].find('button').trigger('click');
+            await wrapper.find('[data-test="pokemon-card-1"]').trigger('click');
+
+            expect(store.team[0]).toEqual(bulbasaur);
+            expect(store.teamCount).toBe(1);
+        });
+    });
 });
