@@ -119,8 +119,7 @@ export const usePokemonStore = defineStore('pokemon', () => {
                     params.append('gen', gen);
                 }
 
-                const response = await fetch(`/api/sets/gen/${format}`);
-
+                const response = await fetch(`/api/pokemon/`);
                 console.log(response);
                 if (!response.ok) {
                     throw new Error('Failed to fetch Pokemon');
@@ -274,7 +273,8 @@ export const usePokemonStore = defineStore('pokemon', () => {
             isInTeam,
             loadTeamFromStorage,
 
-            fetchPokemonByFormat: fetchSetsByFormat,
+            fetchSetsByFormat,
+            fetchSetsByGen,
         };
     })
 ;

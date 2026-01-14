@@ -130,7 +130,7 @@ onMounted(async () => {
   pokemonStore.loadTeamFromStorage();
 
   // Fetch initial Pokemon list
-  await pokemonStore.fetchPokemonByGen();
+  await pokemonStore.fetchPokemon();
 });
 
 const handleAddToTeam = async () => {
