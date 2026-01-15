@@ -33,7 +33,7 @@ const selectedPokemonId = ref('');
 onMounted(async () => {
   // Fetch initial Pokemon list
   await pokemonStore.fetchPokemon();
-  await pokemonStore.fetchPokemonByFormat();
+  await pokemonStore.fetchPokemonInFormat();
 
 });
 
