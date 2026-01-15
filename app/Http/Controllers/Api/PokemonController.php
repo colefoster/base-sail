@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Controller;
 use App\Models\Pokemon;
@@ -42,16 +43,24 @@ class PokemonController extends Controller
     {
         return JsonResponse::fromJsonString(Http::get("https://pkmn.github.io/smogon/data/sets/${tierId}.json"));
     }
+
+    public function fetchPokemonInFormat(string $tierId): Collection
+    {
+
+        $response = Http::get("https://pkmn.github.io/smogon/data/sets/${tierId}.json");
+        return collect($response->json())->keys();
+    }
+
     public function setsByGen(string $gen): JsonResponse
     {
-        if (str_contains(strtolower($gen),"gen")){
+        if (str_contains(strtolower($gen), "gen")) {
             return JsonResponse::fromJsonString(Http::get("https://pkmn.github.io/smogon/data/sets/${gen}.json"));
-        }
-        else{
+        } else {
             return JsonResponse::fromJsonString(Http::get("https://pkmn.github.io/smogon/data/sets/gen${gen}.json"));
 
         }
     }
+
 
     /**
      * Get a single Pokemon with full details
