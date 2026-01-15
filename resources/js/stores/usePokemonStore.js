@@ -5,6 +5,7 @@ export const usePokemonStore = defineStore('pokemon', () => {
         // State
         const pokemon = ref([]);
         const selectedPokemon = ref(null);
+        const currentFormat = ref('gen9ou');
         const loading = ref(false);
         const error = ref(null);
         const loadTime = ref(null);
@@ -22,6 +23,15 @@ export const usePokemonStore = defineStore('pokemon', () => {
         // Getters
         const hasFullTeam = computed(() => team.value.length >= maxTeamSize);
         const teamCount = computed(() => team.value.length);
+        const formattedFormat = computed(() => {
+            // "gen9ou" -> "Gen 9 OU"
+            const match = currentFormat.value.match(/^(gen)(\d+)(.*)$/i);
+            if (match) {
+                const tier = match[3].toUpperCase() || '';
+                return `Gen ${match[2]} ${tier}`.trim();
+            }
+            return currentFormat.value;
+        });
 
         // Actions
         async function fetchPokemon(search = '') {
@@ -76,6 +86,7 @@ export const usePokemonStore = defineStore('pokemon', () => {
         async function fetchPokemonInFormat(format = 'gen9ou') {
             loading.value = true;
             error.value = null;
+            currentFormat.value = format;
             const startTime = performance.now();
 
             try {
@@ -93,6 +104,8 @@ export const usePokemonStore = defineStore('pokemon', () => {
                 }
 
                 const data = await response.json();
+                console.log({"a": "pokemon: ", "b": data});
+
                 const endTime = performance.now();
                 loadTime.value = ((endTime - startTime) / 1000).toFixed(2); // Convert to seconds
 
@@ -257,33 +270,14 @@ export const usePokemonStore = defineStore('pokemon', () => {
             return team.value.some(p => p.api_id === apiId);
         }
 
-// Local storage persistence
-        function saveTeamToStorage() {
-            try {
-                localStorage.setItem('pokemon_team', JSON.stringify(team.value));
-            } catch (err) {
-                console.error('Failed to save team to storage:', err);
-            }
-        }
-
-        function loadTeamFromStorage() {
-            try {
-                const saved = localStorage.getItem('pokemon_team');
-                if (saved) {
-                    team.value = JSON.parse(saved);
-                }
-            } catch (err) {
-                console.error('Failed to load team from storage:', err);
-            }
-        }
-
 // Load team on store initialization
-        loadTeamFromStorage();
+        fetchPokemonInFormat();
 
         return {
             // State
             pokemon,
             selectedPokemon,
+            currentFormat,
             loading,
             error,
             loadTime,
@@ -294,6 +288,7 @@ export const usePokemonStore = defineStore('pokemon', () => {
             // Getters
             hasFullTeam,
             teamCount,
+            formattedFormat,
 
             // Actions
             fetchPokemon,
@@ -304,7 +299,6 @@ export const usePokemonStore = defineStore('pokemon', () => {
             removeFromTeam,
             clearTeam,
             isInTeam,
-            loadTeamFromStorage,
 
             fetchSetsByFormat,
             fetchSetsByGen,
