@@ -1,12 +1,12 @@
 <script setup>
 
 import { ref, onMounted } from 'vue';
-import {usePokemonStore} from "../stores/usePokemonStore.js";
+import {useTeambuilderStore} from "../stores/useTeambuilderStore.js";
 
-const pokemonStore = usePokemonStore();
+const teambuilderStore = useTeambuilderStore();
 onMounted(async () => {
     alert("Hello Poke Builder!");
-    await pokemonStore.fetchPokemonInFormat();
+    await teambuilderStore.fetchPokemonNamesInFormat();
 })
 
 </script>

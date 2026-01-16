@@ -22,8 +22,9 @@ Route::prefix('formats/{format}')->group(function () {
     Route::get('/sets', [PokemonController::class, 'getSets']);
     Route::get('/sets/search', [PokemonController::class, 'searchSets']);
 
-    // Names endpoint
+    // Names endpoints
     Route::get('/names', [PokemonController::class, 'getNames']);
+    Route::get('/names/usage', [PokemonController::class, 'getNamesWithUsage']);
 
     // Pokemon endpoints (database data for Pokemon in format)
     Route::get('/pokemon', [PokemonController::class, 'getPokemonInFormat']);
@@ -32,7 +33,40 @@ Route::prefix('formats/{format}')->group(function () {
     // Combined endpoints (sets + database data)
     Route::get('/combined', [PokemonController::class, 'getCombined']);
     Route::get('/combined/search', [PokemonController::class, 'searchCombined']);
+
+    // Usage stats endpoints
+    Route::get('/stats', [PokemonController::class, 'getStats']);
+    Route::get('/stats/search', [PokemonController::class, 'searchStats']);
+    Route::get('/stats/ranked', [PokemonController::class, 'getStatsRanked']);
+    Route::get('/stats/combined', [PokemonController::class, 'getStatsCombined']);
+    Route::get('/stats/{pokemon}', [PokemonController::class, 'getStatsForPokemon']);
+
+    // Pokemon-specific usage data endpoints
+    Route::get('/pokemon/{pokemon}/moves', [PokemonController::class, 'getPokemonMovesWithUsage']);
+    Route::get('/pokemon/{pokemon}/abilities', [PokemonController::class, 'getPokemonAbilitiesWithUsage']);
+    Route::get('/pokemon/{pokemon}/items', [PokemonController::class, 'getPokemonItemsWithUsage']);
+    Route::get('/pokemon/{pokemon}/teammates', [PokemonController::class, 'getPokemonTeammates']);
+    Route::get('/pokemon/{pokemon}/counters', [PokemonController::class, 'getPokemonCounters']);
+    Route::get('/pokemon/{pokemon}/spreads', [PokemonController::class, 'getPokemonSpreads']);
 });
+
+// Moves API routes
+Route::prefix('moves')->group(function () {
+    Route::get('/search', [PokemonController::class, 'searchMoves']);
+});
+
+// Items API routes
+Route::prefix('items')->group(function () {
+    Route::get('/search', [PokemonController::class, 'searchItems']);
+});
+
+// Types API routes
+Route::prefix('types')->group(function () {
+    Route::get('/', [PokemonController::class, 'getTypes']);
+});
+
+// Natures API route (static data)
+Route::get('/natures', [PokemonController::class, 'getNatures']);
 
 // Sprite API routes (wraps GitHub raw URLs from PokeAPI/sprites)
 Route::prefix('sprites')->group(function () {
