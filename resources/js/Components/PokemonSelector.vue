@@ -1,25 +1,7 @@
 <template>
-    <div>
-        <!-- Header with Format Select -->
-        <div class="bg-white dark:bg-zinc-900 shadow-xl rounded-xl overflow-hidden ring-1 ring-zinc-950/5 dark:ring-white/10">
-            <div class="px-6 py-8">
-                <h1 class="text-4xl font-bold text-zinc-950 dark:text-white mb-2">
-                    Team Builder
-                </h1>
-                <Select
-                    v-model="selectedFormat"
-                    :options="formatOptions"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="Select Format"
-                    class="w-64"
-                    @change="onFormatChange"
-                />
-            </div>
-        </div>
+
 
         <!-- Pokemon Details Section (Always Visible) -->
-        <div class="bg-white dark:bg-zinc-900 shadow-xl rounded-xl overflow-hidden ring-1 ring-zinc-950/5 dark:ring-white/10 mt-4">
             <div class="px-6 py-8">
                 <!-- Pokemon Search -->
                 <div class="mb-6">
@@ -188,9 +170,7 @@
                 <div v-else class="text-center py-8">
                     <p class="text-zinc-600 dark:text-zinc-400">Loading Pokemon data...</p>
                 </div>
-            </div>
         </div>
-    </div>
 </template>
 
 <script setup>
@@ -210,28 +190,6 @@ const filteredPokemon = ref([]);
 const searchTerm = ref('');
 const buildConfig = ref(null);
 
-// Format options
-const formatOptions = [
-    {label: 'Gen 9 OU', value: 'gen9ou'},
-    {label: 'Gen 9 UU', value: 'gen9uu'},
-    {label: 'Gen 9 RU', value: 'gen9ru'},
-    {label: 'Gen 9 NU', value: 'gen9nu'},
-    {label: 'Gen 9 Ubers', value: 'gen9ubers'},
-    {label: 'Gen 9 AG', value: 'gen9ag'},
-    {label: 'Gen 9 Doubles OU', value: 'gen9doublesou'},
-    {label: 'Gen 9 VGC 2024', value: 'gen9vgc2024'},
-    {label: 'Gen 8 OU', value: 'gen8ou'},
-    {label: 'Gen 7 OU', value: 'gen7ou'},
-    {label: 'Gen 6 OU', value: 'gen6ou'},
-    {label: 'Gen 5 OU', value: 'gen5ou'},
-];
-
-const selectedFormat = ref(teambuilderStore.currentFormat);
-
-const onFormatChange = () => {
-    teambuilderStore.setFormat(selectedFormat.value);
-    clearSelection();
-};
 
 // Sprite options
 const spriteStyleOptions = [

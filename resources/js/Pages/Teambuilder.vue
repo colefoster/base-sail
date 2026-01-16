@@ -1,12 +1,16 @@
 <template>
-    <Head title="Team Builder"/>
+    <Head title="Team Builder - Pokésite"/>
 
     <div class="min-h-screen bg-zinc-950">
         <!-- MegaMenu with Template Slots -->
         <MegaMenu :model="menuItems" class="mb-6 border-0 bg-zinc-100 dark:bg-zinc-800 !rounded-none">
             <template #start>
                 <img width="35" height="40" src="../../../public/images/special-ball-96.png" class="h-8"/>
+                <h1 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100 ml-2">
+                    Pokésite
+                </h1>
             </template>
+
             <template #item="{ item, hasSubmenu }">
                 <a v-if="item.url" :href="item.url" :target="item.target"
                    class="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded transition-colors">
@@ -33,9 +37,8 @@
             </template>
         </MegaMenu>
 
-        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-            <PokemonSelector @pokemon-added="onPokemonAdded"/>
-        </div>
+        <TeamEditor/>
+
     </div>
 </template>
 
@@ -44,11 +47,11 @@ import {ref} from 'vue';
 import {Head} from '@inertiajs/vue3';
 import {useTeambuilderStore} from '../stores/useTeambuilderStore';
 
+const teambuilderStore = useTeambuilderStore();
+import TeamEditor from '../Components/TeamEditor.vue';
 import Button from 'primevue/button';
 import MegaMenu from 'primevue/megamenu';
-import PokemonSelector from '../Components/PokemonSelector.vue';
 
-const teambuilderStore = useTeambuilderStore();
 
 // MegaMenu items
 const menuItems = ref([
@@ -87,7 +90,11 @@ const menuItems = ref([
                 {
                     label: 'Special Formats',
                     items: [
-                        {label: 'Ubers', icon: 'pi pi-fw pi-bolt', command: () => teambuilderStore.setFormat('gen9ubers')},
+                        {
+                            label: 'Ubers',
+                            icon: 'pi pi-fw pi-bolt',
+                            command: () => teambuilderStore.setFormat('gen9ubers')
+                        },
                         {
                             label: 'Anything Goes',
                             icon: 'pi pi-fw pi-exclamation-circle',
@@ -239,8 +246,5 @@ const menuItems = ref([
     }
 ]);
 
-const onPokemonAdded = (pokemon) => {
-    // Handle any page-level logic when a Pokemon is added
-    console.log('Pokemon added to team:', pokemon.name);
-};
+
 </script>

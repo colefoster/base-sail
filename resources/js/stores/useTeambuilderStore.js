@@ -17,6 +17,9 @@ export const useTeambuilderStore = defineStore('teambuilder', () => {
     const team = ref([]);
     const maxTeamSize = 6;
 
+    const teams = ref(["Team 1", "Team 2"]); // Object to hold multiple teams
+
+
     // Getters
     const hasFullTeam = computed(() => team.value.length >= maxTeamSize);
     const teamCount = computed(() => team.value.length);
@@ -219,6 +222,7 @@ export const useTeambuilderStore = defineStore('teambuilder', () => {
         error,
         loadTime,
         team,
+        teams,
         maxTeamSize,
         sortByUsage,
 

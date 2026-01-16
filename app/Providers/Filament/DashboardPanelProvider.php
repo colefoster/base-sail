@@ -32,7 +32,7 @@ class DashboardPanelProvider extends PanelProvider
             ->path('')
             ->login(Login::class)
             ->favicon(asset('/images/special-ball-96.png'))
-            ->brandName("Pokésite")->sidebarCollapsibleOnDesktop()
+            ->brandName("Pokésite Dashboard")->sidebarCollapsibleOnDesktop()
             ->colors(
                 MyAppColors::loadAppColors(),
             )
