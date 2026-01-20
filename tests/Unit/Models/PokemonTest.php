@@ -2,13 +2,7 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\Ability;
-use App\Models\Item;
-use App\Models\Move;
 use App\Models\Pokemon;
-use App\Models\PokemonSpecies;
-use App\Models\PokemonStat;
-use App\Models\Type;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,7 +12,7 @@ class PokemonTest extends TestCase
 
     public function test_pokemon_has_fillable_attributes(): void
     {
-        $pokemon = new Pokemon();
+        $pokemon = new Pokemon;
 
         $this->assertEquals([
             'api_id',
@@ -56,7 +50,7 @@ class PokemonTest extends TestCase
 
     public function test_pokemon_has_types_relationship(): void
     {
-        $pokemon = new Pokemon();
+        $pokemon = new Pokemon;
 
         $this->assertInstanceOf(
             \Illuminate\Database\Eloquent\Relations\BelongsToMany::class,
@@ -66,7 +60,7 @@ class PokemonTest extends TestCase
 
     public function test_pokemon_has_abilities_relationship(): void
     {
-        $pokemon = new Pokemon();
+        $pokemon = new Pokemon;
 
         $this->assertInstanceOf(
             \Illuminate\Database\Eloquent\Relations\BelongsToMany::class,
@@ -76,7 +70,7 @@ class PokemonTest extends TestCase
 
     public function test_pokemon_has_moves_relationship(): void
     {
-        $pokemon = new Pokemon();
+        $pokemon = new Pokemon;
 
         $this->assertInstanceOf(
             \Illuminate\Database\Eloquent\Relations\BelongsToMany::class,

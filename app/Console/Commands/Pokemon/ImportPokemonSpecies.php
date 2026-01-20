@@ -28,6 +28,7 @@ class ImportPokemonSpecies extends Command
 
         if ($this->shouldRunParallel()) {
             $maxSpecies = $this->option('max') ? (int) $this->option('max') : null;
+
             return $this->runInParallel('/pokemon-species', 'pokemon:import-species', [
                 '--delay' => $this->option('delay'),
                 '--max' => $maxSpecies,
@@ -55,7 +56,9 @@ class ImportPokemonSpecies extends Command
                 $bar->start();
 
                 foreach ($speciesList as $speciesData) {
-                    if (($maxSpecies && $totalImported >= $maxSpecies) || ($maxItems && $totalImported >= $maxItems)) break;
+                    if (($maxSpecies && $totalImported >= $maxSpecies) || ($maxItems && $totalImported >= $maxItems)) {
+                        break;
+                    }
 
                     try {
                         $speciesId = $this->api->extractIdFromUrl($speciesData['url']);
@@ -92,14 +95,15 @@ class ImportPokemonSpecies extends Command
                 $this->newLine();
                 $offset += $limit;
 
-            } while (!empty($speciesList) && (!$maxSpecies || $totalImported < $maxSpecies) && (!$maxItems || $totalImported < $maxItems));
+            } while (! empty($speciesList) && (! $maxSpecies || $totalImported < $maxSpecies) && (! $maxItems || $totalImported < $maxItems));
 
             $this->showStats('Pokemon Species', PokemonSpecies::count());
 
             return self::SUCCESS;
 
         } catch (\Exception $e) {
-            $this->error('❌ Import failed: ' . $e->getMessage());
+            $this->error('❌ Import failed: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }

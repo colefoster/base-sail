@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Traits\FormatsNameAttribute;
+use App\Models\Traits\HasApiRouteKey;
+use App\Models\Traits\OrderedByApiId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PokemonSpecies extends Model
 {
-    use HasFactory;
+    use FormatsNameAttribute, HasApiRouteKey, HasFactory, OrderedByApiId;
 
     protected $fillable = [
         'api_id',
@@ -39,13 +42,6 @@ class PokemonSpecies extends Model
         'is_mythical' => 'boolean',
         'evolution_chain_id' => 'integer',
     ];
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope('ordered', function ($query) {
-            $query->orderBy('api_id');
-        });
-    }
 
     public function evolutionChain(): BelongsTo
     {

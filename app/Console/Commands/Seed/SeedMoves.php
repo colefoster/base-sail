@@ -21,6 +21,7 @@ class SeedMoves extends Command
     protected $description = 'Seed moves table from PokeAPI with parallel processing support';
 
     protected PokeApiService $api;
+
     protected int $delay;
 
     public function handle(): int
@@ -31,12 +32,12 @@ class SeedMoves extends Command
         $threads = (int) $this->option('threads');
         $isWorker = $this->option('worker-id') !== null;
 
-        if ($threads > 1 && !$isWorker) {
+        if ($threads > 1 && ! $isWorker) {
             return $this->runInParallel();
         }
 
-        $prefix = $isWorker ? "[Worker {$this->option('worker-id')}] " : "";
-        $this->info($prefix . '🥊 Importing Moves...');
+        $prefix = $isWorker ? "[Worker {$this->option('worker-id')}] " : '';
+        $this->info($prefix.'🥊 Importing Moves...');
 
         try {
             $offset = (int) $this->option('offset');
@@ -48,7 +49,9 @@ class SeedMoves extends Command
                 $response = $this->api->fetch("/move?limit={$limit}&offset={$offset}");
                 $moves = $response['results'] ?? [];
 
-                if (empty($moves) || ($maxItems && $itemsProcessed >= $maxItems)) break;
+                if (empty($moves) || ($maxItems && $itemsProcessed >= $maxItems)) {
+                    break;
+                }
 
                 $remaining = $maxItems ? min(count($moves), $maxItems - $itemsProcessed) : count($moves);
                 $bar = $this->output->createProgressBar($remaining);
@@ -113,12 +116,14 @@ class SeedMoves extends Command
                 $this->newLine();
                 $offset += $limit;
 
-            } while (!empty($moves) && (!$maxItems || $itemsProcessed < $maxItems));
+            } while (! empty($moves) && (! $maxItems || $itemsProcessed < $maxItems));
 
-            $this->info($prefix . "Moves imported: " . Move::count());
+            $this->info($prefix.'Moves imported: '.Move::count());
+
             return self::SUCCESS;
         } catch (\Exception $e) {
-            $this->error('❌ Move import failed: ' . $e->getMessage());
+            $this->error('❌ Move import failed: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }
@@ -133,6 +138,7 @@ class SeedMoves extends Command
 
         if ($totalItems === 0) {
             $this->warn('No moves found to import.');
+
             return self::SUCCESS;
         }
 
@@ -143,14 +149,16 @@ class SeedMoves extends Command
             $offset = $i * $itemsPerThread;
             $maxItems = min($itemsPerThread, $totalItems - $offset);
 
-            if ($maxItems <= 0) break;
+            if ($maxItems <= 0) {
+                break;
+            }
 
             $command = [
                 PHP_BINARY, 'artisan', 'seed:moves',
-                '--threads=1', '--worker-id=' . $i,
-                '--offset=' . $offset, '--max-items=' . $maxItems,
-                '--delay=' . $this->option('delay'),
-                '--limit=' . $this->option('limit'),
+                '--threads=1', '--worker-id='.$i,
+                '--offset='.$offset, '--max-items='.$maxItems,
+                '--delay='.$this->option('delay'),
+                '--limit='.$this->option('limit'),
             ];
 
             $process = new Process($command, base_path());
@@ -168,14 +176,14 @@ class SeedMoves extends Command
         foreach ($processes as $workerData) {
             $workerData['process']->wait();
             $success = $workerData['process']->isSuccessful();
-            $this->info("[Worker {$workerData['id']}] " . ($success ? '✅ Completed' : '❌ Failed'));
+            $this->info("[Worker {$workerData['id']}] ".($success ? '✅ Completed' : '❌ Failed'));
             $allSuccessful = $allSuccessful && $success;
         }
 
         if ($allSuccessful) {
             $this->newLine();
             $this->info('✅ All workers completed successfully!');
-            $this->info("Total moves imported: " . Move::count());
+            $this->info('Total moves imported: '.Move::count());
         }
 
         return $allSuccessful ? self::SUCCESS : self::FAILURE;

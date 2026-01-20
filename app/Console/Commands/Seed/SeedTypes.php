@@ -20,6 +20,7 @@ class SeedTypes extends Command
     protected $description = 'Seed types table from PokeAPI with parallel processing support';
 
     protected PokeApiService $api;
+
     protected int $delay;
 
     public function handle(): int
@@ -30,12 +31,12 @@ class SeedTypes extends Command
         $threads = (int) $this->option('threads');
         $isWorker = $this->option('worker-id') !== null;
 
-        if ($threads > 1 && !$isWorker) {
+        if ($threads > 1 && ! $isWorker) {
             return $this->runInParallel();
         }
 
-        $prefix = $isWorker ? "[Worker {$this->option('worker-id')}] " : "";
-        $this->info($prefix . '📋 Importing Types...');
+        $prefix = $isWorker ? "[Worker {$this->option('worker-id')}] " : '';
+        $this->info($prefix.'📋 Importing Types...');
 
         try {
             $offset = (int) $this->option('offset');
@@ -65,17 +66,18 @@ class SeedTypes extends Command
                     $bar->advance();
                     usleep($this->delay * 1000);
                 } catch (\Exception $e) {
-                    $this->warn("\n{$prefix}Error importing type: " . $e->getMessage());
+                    $this->warn("\n{$prefix}Error importing type: ".$e->getMessage());
                 }
             }
 
             $bar->finish();
             $this->newLine();
-            $this->info($prefix . "Types imported: " . Type::count());
+            $this->info($prefix.'Types imported: '.Type::count());
 
             return self::SUCCESS;
         } catch (\Exception $e) {
-            $this->error('❌ Type import failed: ' . $e->getMessage());
+            $this->error('❌ Type import failed: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }
@@ -91,6 +93,7 @@ class SeedTypes extends Command
 
         if ($totalItems === 0) {
             $this->warn('No types found to import.');
+
             return self::SUCCESS;
         }
 
@@ -111,11 +114,11 @@ class SeedTypes extends Command
                 'artisan',
                 'seed:types',
                 '--threads=1',
-                '--worker-id=' . $i,
-                '--offset=' . $offset,
-                '--max-items=' . $maxItems,
-                '--delay=' . $this->option('delay'),
-                '--limit=' . $this->option('limit'),
+                '--worker-id='.$i,
+                '--offset='.$offset,
+                '--max-items='.$maxItems,
+                '--delay='.$this->option('delay'),
+                '--limit='.$this->option('limit'),
             ];
 
             $process = new Process($command, base_path());
@@ -137,7 +140,7 @@ class SeedTypes extends Command
 
             $process->wait();
 
-            if (!$process->isSuccessful()) {
+            if (! $process->isSuccessful()) {
                 $this->error("[Worker {$workerId}] ❌ Failed");
                 $allSuccessful = false;
             } else {
@@ -148,7 +151,7 @@ class SeedTypes extends Command
         if ($allSuccessful) {
             $this->newLine();
             $this->info('✅ All workers completed successfully!');
-            $this->info("Total types imported: " . Type::count());
+            $this->info('Total types imported: '.Type::count());
         }
 
         return $allSuccessful ? self::SUCCESS : self::FAILURE;

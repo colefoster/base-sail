@@ -45,13 +45,17 @@ class ImportEvolutionChains extends Command
                 $response = $this->api->fetch("/evolution-chain?limit={$limit}&offset={$offset}");
                 $chains = $response['results'] ?? [];
 
-                if (empty($chains) || ($maxItems && $itemsProcessed >= $maxItems)) break;
+                if (empty($chains) || ($maxItems && $itemsProcessed >= $maxItems)) {
+                    break;
+                }
 
                 $bar = $this->output->createProgressBar(count($chains));
                 $bar->start();
 
                 foreach ($chains as $chainData) {
-                    if ($maxItems && $itemsProcessed >= $maxItems) break;
+                    if ($maxItems && $itemsProcessed >= $maxItems) {
+                        break;
+                    }
 
                     try {
                         $itemsProcessed++;
@@ -70,7 +74,7 @@ class ImportEvolutionChains extends Command
                         $this->applyDelay();
                     } catch (\Exception $e) {
                         $this->recordError();
-                        $this->warn("\nError importing evolution chain: " . $e->getMessage());
+                        $this->warn("\nError importing evolution chain: ".$e->getMessage());
                     }
                 }
 
@@ -78,14 +82,15 @@ class ImportEvolutionChains extends Command
                 $this->newLine();
                 $offset += $limit;
 
-            } while (!empty($chains) && (!$maxItems || $itemsProcessed < $maxItems));
+            } while (! empty($chains) && (! $maxItems || $itemsProcessed < $maxItems));
 
             $this->showStats('Evolution Chains', EvolutionChain::count());
 
             return self::SUCCESS;
 
         } catch (\Exception $e) {
-            $this->error('❌ Import failed: ' . $e->getMessage());
+            $this->error('❌ Import failed: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }
@@ -95,7 +100,7 @@ class ImportEvolutionChains extends Command
         $speciesName = $chainNode['species']['name'];
         $species = PokemonSpecies::where('name', $speciesName)->first();
 
-        if (!$species) {
+        if (! $species) {
             return;
         }
 

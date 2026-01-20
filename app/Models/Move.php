@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Traits\FormatsNameAttribute;
+use App\Models\Traits\HasApiRouteKey;
+use App\Models\Traits\OrderedByApiId;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Move extends Model
 {
-    use HasFactory, SoftDeletes;
+    use FormatsNameAttribute, HasApiRouteKey, HasFactory, OrderedByApiId, SoftDeletes;
 
     protected $fillable = [
         'api_id',
@@ -63,13 +66,6 @@ class Move extends Model
         'stat_chance' => 'integer',
     ];
 
-    protected function name(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => ucwords(str_replace('-', ' ', $value)),
-        );
-    }
-
     protected function damageClass(): Attribute
     {
         return Attribute::make(
@@ -103,18 +99,6 @@ class Move extends Model
         return Attribute::make(
             get: fn ($value) => ucwords(str_replace('-', ' ', $value)),
         );
-    }
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope('ordered', function ($query) {
-            $query->orderBy('api_id');
-        });
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'api_id';
     }
 
     public function type(): BelongsTo

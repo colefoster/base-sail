@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Traits\FormatsNameAttribute;
+use App\Models\Traits\HasApiRouteKey;
+use App\Models\Traits\OrderedByApiId;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pokemon extends Model
 {
-    use HasFactory, SoftDeletes;
+    use FormatsNameAttribute, HasApiRouteKey, HasFactory, OrderedByApiId, SoftDeletes;
 
     protected $fillable = [
         'api_id',
@@ -32,47 +35,25 @@ class Pokemon extends Model
 
     protected $casts = [
         'api_id' => 'integer',
-        'height' => 'integer',
-        'weight' => 'integer',
         'base_experience' => 'integer',
         'is_default' => 'boolean',
         'species_id' => 'integer',
+        'height' => 'float',
+        'weight' => 'float',
     ];
 
-    protected function name(): Attribute{
+    protected function weight(): Attribute
+    {
         return Attribute::make(
-            get: fn ($value) => ucfirst($value),
-        );
-    }
-    protected function weight(): Attribute{
-        return Attribute::make(
-            get: fn ($value) => ($value)/10,
+            get: fn ($value) => $value / 10,
         );
     }
 
-    protected function height(): Attribute{
+    protected function height(): Attribute
+    {
         return Attribute::make(
-            get: fn ($value) => ($value)/10,
+            get: fn ($value) => $value / 10,
         );
-    }
-    protected function casts(): array
-    {
-        return [
-            'height' => 'float',
-            'weight' => 'float',
-        ];
-    }
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope('ordered', function ($query) {
-            $query->orderBy('api_id');
-        });
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'api_id';
     }
 
     public function species(): BelongsTo
@@ -118,63 +99,62 @@ class Pokemon extends Model
         return $this->hasMany(PokemonGameIndex::class);
     }
 
-    // Stat accessors for Filament table columns
-    protected function hpStat(): \Illuminate\Database\Eloquent\Casts\Attribute
+    protected function hpStat(): Attribute
     {
-        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            get: fn() => $this->stats->firstWhere('stat_name', 'hp')?->base_stat
+        return Attribute::make(
+            get: fn () => $this->stats->firstWhere('stat_name', 'hp')?->base_stat
         );
     }
 
-    protected function attackStat(): \Illuminate\Database\Eloquent\Casts\Attribute
+    protected function attackStat(): Attribute
     {
-        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            get: fn() => $this->stats->firstWhere('stat_name', 'attack')?->base_stat
+        return Attribute::make(
+            get: fn () => $this->stats->firstWhere('stat_name', 'attack')?->base_stat
         );
     }
 
-    protected function defenseStat(): \Illuminate\Database\Eloquent\Casts\Attribute
+    protected function defenseStat(): Attribute
     {
-        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            get: fn() => $this->stats->firstWhere('stat_name', 'defense')?->base_stat
+        return Attribute::make(
+            get: fn () => $this->stats->firstWhere('stat_name', 'defense')?->base_stat
         );
     }
 
-    protected function specialAttackStat(): \Illuminate\Database\Eloquent\Casts\Attribute
+    protected function specialAttackStat(): Attribute
     {
-        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            get: fn() => $this->stats->firstWhere('stat_name', 'special-attack')?->base_stat
+        return Attribute::make(
+            get: fn () => $this->stats->firstWhere('stat_name', 'special-attack')?->base_stat
         );
     }
 
-    protected function specialDefenseStat(): \Illuminate\Database\Eloquent\Casts\Attribute
+    protected function specialDefenseStat(): Attribute
     {
-        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            get: fn() => $this->stats->firstWhere('stat_name', 'special-defense')?->base_stat
+        return Attribute::make(
+            get: fn () => $this->stats->firstWhere('stat_name', 'special-defense')?->base_stat
         );
     }
 
-    protected function speedStat(): \Illuminate\Database\Eloquent\Casts\Attribute
+    protected function speedStat(): Attribute
     {
-        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            get: fn() => $this->stats->firstWhere('stat_name', 'speed')?->base_stat
+        return Attribute::make(
+            get: fn () => $this->stats->firstWhere('stat_name', 'speed')?->base_stat
         );
     }
 
-    protected function totalBaseStat(): \Illuminate\Database\Eloquent\Casts\Attribute
+    protected function totalBaseStat(): Attribute
     {
-        return \Illuminate\Database\Eloquent\Casts\Attribute::make(
-            get: fn() => $this->stats->sum('base_stat')
+        return Attribute::make(
+            get: fn () => $this->stats->sum('base_stat')
         );
     }
 
     /**
-     * Get flattened evolution chain data for Filament entries
+     * Get flattened evolution chain data for Filament entries.
      * Returns a flat array with stage_1_sprite, stage_1_name, etc.
      */
     public function getEvolutionChainData(): array
     {
-        if (!$this->species || !$this->species->evolutionChain) {
+        if (! $this->species || ! $this->species->evolutionChain) {
             return ['has_evolutions' => false];
         }
 
@@ -193,7 +173,7 @@ class Pokemon extends Model
         $evolutionMap = [];
         foreach ($evolutions as $evolution) {
             $fromSpeciesId = $evolution->species_id;
-            if (!isset($evolutionMap[$fromSpeciesId])) {
+            if (! isset($evolutionMap[$fromSpeciesId])) {
                 $evolutionMap[$fromSpeciesId] = [];
             }
             $evolutionMap[$fromSpeciesId][] = $evolution;
@@ -205,9 +185,9 @@ class Pokemon extends Model
         $rootSpeciesIds = array_diff($allFromSpeciesIds, $allToSpeciesIds);
 
         // If no root found, use the first species in the chain
-        $rootSpeciesId = !empty($rootSpeciesIds) ? reset($rootSpeciesIds) : $chain->species()->first()?->id;
+        $rootSpeciesId = ! empty($rootSpeciesIds) ? reset($rootSpeciesIds) : $chain->species()->first()?->id;
 
-        if (!$rootSpeciesId) {
+        if (! $rootSpeciesId) {
             return ['has_evolutions' => false];
         }
 
@@ -230,7 +210,7 @@ class Pokemon extends Model
     }
 
     /**
-     * Build a linear evolution chain (follows first evolution path)
+     * Build a linear evolution chain (follows first evolution path).
      */
     private function buildLinearChain(int $speciesId, array $evolutionMap, array &$chainStages): void
     {
@@ -238,7 +218,7 @@ class Pokemon extends Model
             $query->where('is_default', true);
         }])->find($speciesId);
 
-        if (!$species) {
+        if (! $species) {
             return;
         }
 
@@ -248,17 +228,18 @@ class Pokemon extends Model
             'sprite' => $defaultPokemon?->sprite_front_default,
             'name' => $species->name,
             'api_id' => $defaultPokemon?->api_id,
-            'method' => null
+            'method' => null,
         ];
 
         // Get evolution method if this species evolves
-        if (isset($evolutionMap[$speciesId]) && !empty($evolutionMap[$speciesId])) {
+        if (isset($evolutionMap[$speciesId]) && ! empty($evolutionMap[$speciesId])) {
             $evolution = $evolutionMap[$speciesId][0]; // Take first evolution path
             if ($evolution->evolves_to_species_id) {
                 $stage['method'] = $this->formatEvolutionMethod($evolution);
                 $chainStages[] = $stage;
                 // Continue with next stage
                 $this->buildLinearChain($evolution->evolves_to_species_id, $evolutionMap, $chainStages);
+
                 return;
             }
         }
@@ -268,7 +249,7 @@ class Pokemon extends Model
     }
 
     /**
-     * Format the evolution method into a human-readable string
+     * Format the evolution method into a human-readable string.
      */
     private function formatEvolutionMethod(Evolution $evolution): string
     {
@@ -287,7 +268,7 @@ class Pokemon extends Model
         }
 
         if ($evolution->held_item) {
-            $parts[] = "Holding " . ucfirst(str_replace('-', ' ', $evolution->held_item));
+            $parts[] = 'Holding '.ucfirst(str_replace('-', ' ', $evolution->held_item));
         }
 
         if ($evolution->min_happiness) {
@@ -299,7 +280,7 @@ class Pokemon extends Model
         }
 
         if ($evolution->location) {
-            $parts[] = "At " . ucfirst(str_replace('-', ' ', $evolution->location));
+            $parts[] = 'At '.ucfirst(str_replace('-', ' ', $evolution->location));
         }
 
         if ($evolution->time_of_day) {
@@ -307,18 +288,17 @@ class Pokemon extends Model
         }
 
         if ($evolution->known_move) {
-            $parts[] = "Knowing " . ucfirst(str_replace('-', ' ', $evolution->known_move));
+            $parts[] = 'Knowing '.ucfirst(str_replace('-', ' ', $evolution->known_move));
         }
 
         if ($evolution->needs_overworld_rain) {
-            $parts[] = "During rain";
+            $parts[] = 'During rain';
         }
 
         if ($evolution->turn_upside_down) {
-            $parts[] = "Turn console upside down";
+            $parts[] = 'Turn console upside down';
         }
 
-        return !empty($parts) ? implode(', ', $parts) : 'Unknown method';
+        return ! empty($parts) ? implode(', ', $parts) : 'Unknown method';
     }
-
 }

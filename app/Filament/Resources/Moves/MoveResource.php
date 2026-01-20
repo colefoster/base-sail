@@ -13,7 +13,6 @@ use App\Models\Move;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -21,7 +20,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class MoveResource extends Resource
 {
     protected static ?string $model = Move::class;
-    protected static string|BackedEnum|null $navigationIcon = "css-pokemon";
+
+    protected static string|BackedEnum|null $navigationIcon = 'css-pokemon';
 
     protected static string|null|\UnitEnum $navigationGroup = 'Data';
 
@@ -45,6 +45,7 @@ class MoveResource extends Resource
     public static function table(Table $table): Table
     {
         $movesTable = MovesTable::configure($table);
+
         return $movesTable;
     }
 

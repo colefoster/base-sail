@@ -26,6 +26,6 @@ class UserSeeder extends Seeder
             'is_admin' => false,
         ]);
 
-        $this->command->info("Admin and Guest Users created successfully!");
+        $this->command->info('Admin and Guest Users created successfully!');
     }
 }

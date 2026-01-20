@@ -41,6 +41,7 @@ class ImportPokemonData extends Command
 
         if ($this->shouldRunParallel()) {
             $maxPokemon = $this->option('max') ? (int) $this->option('max') : null;
+
             return $this->runInParallel('/pokemon', 'pokemon:import-data', [
                 '--delay' => $this->option('delay'),
                 '--max' => $maxPokemon,
@@ -68,7 +69,9 @@ class ImportPokemonData extends Command
                 $bar->start();
 
                 foreach ($pokemonList as $pokemonData) {
-                    if (($maxPokemon && $totalImported >= $maxPokemon) || ($maxItems && $totalImported >= $maxItems)) break;
+                    if (($maxPokemon && $totalImported >= $maxPokemon) || ($maxItems && $totalImported >= $maxItems)) {
+                        break;
+                    }
 
                     try {
                         $pokemonId = $this->api->extractIdFromUrl($pokemonData['url']);
@@ -90,7 +93,7 @@ class ImportPokemonData extends Command
 
                     } catch (\Exception $e) {
                         $this->recordError();
-                        $this->warn("\nError importing pokemon: " . $e->getMessage());
+                        $this->warn("\nError importing pokemon: ".$e->getMessage());
                     }
                 }
 
@@ -98,14 +101,15 @@ class ImportPokemonData extends Command
                 $this->newLine();
                 $offset += $limit;
 
-            } while (!empty($pokemonList) && (!$maxPokemon || $totalImported < $maxPokemon) && (!$maxItems || $totalImported < $maxItems));
+            } while (! empty($pokemonList) && (! $maxPokemon || $totalImported < $maxPokemon) && (! $maxItems || $totalImported < $maxItems));
 
             $this->showStats('Pokemon', Pokemon::count());
 
             return self::SUCCESS;
 
         } catch (\Exception $e) {
-            $this->error('❌ Import failed: ' . $e->getMessage());
+            $this->error('❌ Import failed: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }
@@ -185,7 +189,7 @@ class ImportPokemonData extends Command
         $moveIds = [];
         foreach ($pokemonDetails['moves'] ?? [] as $moveData) {
             $move = Move::where('name', $moveData['move']['name'])->first();
-            if ($move && !isset($moveIds[$move->id])) {
+            if ($move && ! isset($moveIds[$move->id])) {
                 $versionGroupDetails = $moveData['version_group_details'][0] ?? null;
                 $moveIds[$move->id] = [
                     'learn_method' => $versionGroupDetails['move_learn_method']['name'] ?? null,

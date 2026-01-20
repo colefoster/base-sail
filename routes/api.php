@@ -1,7 +1,13 @@
 <?php
 
+use App\Http\Controllers\Api\ItemController;
+use App\Http\Controllers\Api\MoveController;
 use App\Http\Controllers\Api\PokemonController;
+use App\Http\Controllers\Api\PokemonUsageController;
+use App\Http\Controllers\Api\SmogonFormatController;
+use App\Http\Controllers\Api\SmogonStatsController;
 use App\Http\Controllers\Api\SpriteController;
+use App\Http\Controllers\Api\TypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,54 +25,54 @@ Route::prefix('pokemon')->group(function () {
 // Format/Smogon API routes
 Route::prefix('formats/{format}')->group(function () {
     // Sets endpoints (Smogon data only)
-    Route::get('/sets', [PokemonController::class, 'getSets']);
-    Route::get('/sets/search', [PokemonController::class, 'searchSets']);
+    Route::get('/sets', [SmogonFormatController::class, 'getSets']);
+    Route::get('/sets/search', [SmogonFormatController::class, 'searchSets']);
 
     // Names endpoints
-    Route::get('/names', [PokemonController::class, 'getNames']);
-    Route::get('/names/usage', [PokemonController::class, 'getNamesWithUsage']);
+    Route::get('/names', [SmogonFormatController::class, 'getNames']);
+    Route::get('/names/usage', [SmogonFormatController::class, 'getNamesWithUsage']);
 
     // Pokemon endpoints (database data for Pokemon in format)
-    Route::get('/pokemon', [PokemonController::class, 'getPokemonInFormat']);
-    Route::get('/pokemon/search', [PokemonController::class, 'searchPokemonInFormat']);
+    Route::get('/pokemon', [SmogonFormatController::class, 'getPokemonInFormat']);
+    Route::get('/pokemon/search', [SmogonFormatController::class, 'searchPokemonInFormat']);
 
     // Combined endpoints (sets + database data)
-    Route::get('/combined', [PokemonController::class, 'getCombined']);
-    Route::get('/combined/search', [PokemonController::class, 'searchCombined']);
+    Route::get('/combined', [SmogonFormatController::class, 'getCombined']);
+    Route::get('/combined/search', [SmogonFormatController::class, 'searchCombined']);
 
     // Usage stats endpoints
-    Route::get('/stats', [PokemonController::class, 'getStats']);
-    Route::get('/stats/search', [PokemonController::class, 'searchStats']);
-    Route::get('/stats/ranked', [PokemonController::class, 'getStatsRanked']);
-    Route::get('/stats/combined', [PokemonController::class, 'getStatsCombined']);
-    Route::get('/stats/{pokemon}', [PokemonController::class, 'getStatsForPokemon']);
+    Route::get('/stats', [SmogonStatsController::class, 'getStats']);
+    Route::get('/stats/search', [SmogonStatsController::class, 'searchStats']);
+    Route::get('/stats/ranked', [SmogonStatsController::class, 'getStatsRanked']);
+    Route::get('/stats/combined', [SmogonStatsController::class, 'getStatsCombined']);
+    Route::get('/stats/{pokemon}', [SmogonStatsController::class, 'getStatsForPokemon']);
 
     // Pokemon-specific usage data endpoints
-    Route::get('/pokemon/{pokemon}/moves', [PokemonController::class, 'getPokemonMovesWithUsage']);
-    Route::get('/pokemon/{pokemon}/abilities', [PokemonController::class, 'getPokemonAbilitiesWithUsage']);
-    Route::get('/pokemon/{pokemon}/items', [PokemonController::class, 'getPokemonItemsWithUsage']);
-    Route::get('/pokemon/{pokemon}/teammates', [PokemonController::class, 'getPokemonTeammates']);
-    Route::get('/pokemon/{pokemon}/counters', [PokemonController::class, 'getPokemonCounters']);
-    Route::get('/pokemon/{pokemon}/spreads', [PokemonController::class, 'getPokemonSpreads']);
+    Route::get('/pokemon/{pokemon}/moves', [PokemonUsageController::class, 'getMoves']);
+    Route::get('/pokemon/{pokemon}/abilities', [PokemonUsageController::class, 'getAbilities']);
+    Route::get('/pokemon/{pokemon}/items', [PokemonUsageController::class, 'getItems']);
+    Route::get('/pokemon/{pokemon}/teammates', [PokemonUsageController::class, 'getTeammates']);
+    Route::get('/pokemon/{pokemon}/counters', [PokemonUsageController::class, 'getCounters']);
+    Route::get('/pokemon/{pokemon}/spreads', [PokemonUsageController::class, 'getSpreads']);
 });
 
 // Moves API routes
 Route::prefix('moves')->group(function () {
-    Route::get('/search', [PokemonController::class, 'searchMoves']);
+    Route::get('/search', [MoveController::class, 'search']);
 });
 
 // Items API routes
 Route::prefix('items')->group(function () {
-    Route::get('/search', [PokemonController::class, 'searchItems']);
+    Route::get('/search', [ItemController::class, 'search']);
 });
 
 // Types API routes
 Route::prefix('types')->group(function () {
-    Route::get('/', [PokemonController::class, 'getTypes']);
+    Route::get('/', [TypeController::class, 'index']);
 });
 
 // Natures API route (static data)
-Route::get('/natures', [PokemonController::class, 'getNatures']);
+Route::get('/natures', [TypeController::class, 'natures']);
 
 // Sprite API routes (wraps GitHub raw URLs from PokeAPI/sprites)
 Route::prefix('sprites')->group(function () {

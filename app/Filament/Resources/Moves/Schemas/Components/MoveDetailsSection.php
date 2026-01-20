@@ -25,7 +25,7 @@ class MoveDetailsSection
                 TextEntry::make('power')
                     ->numeric()
                     ->badge()
-                    ->color(fn ($state) => match(true) {
+                    ->color(fn ($state) => match (true) {
                         $state === null => Color::Gray,
                         $state >= 100 => Color::Red,
                         $state >= 80 => Color::Orange,
@@ -41,13 +41,13 @@ class MoveDetailsSection
                     ->hidden(fn ($state) => $state === null),
                 TextEntry::make('accuracy')
                     ->numeric()
-                    ->formatStateUsing(fn ($state) => $state !== null ? $state . '%' : '-')
+                    ->formatStateUsing(fn ($state) => $state !== null ? $state.'%' : '-')
                     ->placeholder('-')
                     ->hidden(fn ($state) => $state === null),
                 TextEntry::make('priority')
                     ->numeric()
                     ->badge()
-                    ->color(fn ($state) => match(true) {
+                    ->color(fn ($state) => match (true) {
                         $state === null => Color::Gray,
                         $state > 0 => Color::Green,
                         $state < 0 => Color::Red,
@@ -58,15 +58,15 @@ class MoveDetailsSection
                 TextEntry::make('type.name')
                     ->label('Type')
                     ->badge()
-                    ->color(fn($state): string => $state ?? 'gray')
-                    ->formatStateUsing(fn($state) => ucfirst($state ?? '-'))
+                    ->color(fn ($state): string => $state ?? 'gray')
+                    ->formatStateUsing(fn ($state) => ucfirst($state ?? '-'))
                     ->placeholder('-')
                     ->hidden(fn ($state) => $state === null),
                 TextEntry::make('damage_class')
                     ->label('Damage Class')
                     ->badge()
                     ->formatStateUsing(fn ($state) => ucfirst($state ?? '-'))
-                    ->color(fn ($state) => match($state) {
+                    ->color(fn ($state) => match ($state) {
                         'physical' => Color::Red,
                         'special' => Color::Blue,
                         'status' => Color::Gray,
@@ -78,19 +78,22 @@ class MoveDetailsSection
                     ->label('Generation')
                     ->badge()
                     ->formatStateUsing(function ($state) {
-                        if (!$state) return '-';
+                        if (! $state) {
+                            return '-';
+                        }
                         $gens = [
-                            "generation-i" => "Gen 1",
-                            "generation-ii" => "Gen 2",
-                            "generation-iii" => "Gen 3",
-                            "generation-iv" => "Gen 4",
-                            "generation-v" => "Gen 5",
-                            "generation-vi" => "Gen 6",
-                            "generation-vii" => "Gen 7",
-                            "generation-viii" => "Gen 8",
-                            "generation-ix" => "Gen 9",
-                            "generation-x" => "Gen 10",
+                            'generation-i' => 'Gen 1',
+                            'generation-ii' => 'Gen 2',
+                            'generation-iii' => 'Gen 3',
+                            'generation-iv' => 'Gen 4',
+                            'generation-v' => 'Gen 5',
+                            'generation-vi' => 'Gen 6',
+                            'generation-vii' => 'Gen 7',
+                            'generation-viii' => 'Gen 8',
+                            'generation-ix' => 'Gen 9',
+                            'generation-x' => 'Gen 10',
                         ];
+
                         return $gens[$state] ?? ucwords(str_replace('-', ' ', $state));
                     })
                     ->placeholder('-')
@@ -102,7 +105,7 @@ class MoveDetailsSection
                 TextEntry::make('effect_chance')
                     ->label('Effect Chance')
                     ->numeric()
-                    ->formatStateUsing(fn ($state) => $state !== null ? $state . '%' : '-')
+                    ->formatStateUsing(fn ($state) => $state !== null ? $state.'%' : '-')
                     ->placeholder('-')
                     ->hidden(fn ($state) => $state === null || $state === 0),
                 TextEntry::make('contest_type')
@@ -123,13 +126,13 @@ class MoveDetailsSection
                 TextEntry::make('ailment_chance')
                     ->label('Ailment %')
                     ->numeric()
-                    ->formatStateUsing(fn ($state) => $state !== null ? $state . '%' : '-')
+                    ->formatStateUsing(fn ($state) => $state !== null ? $state.'%' : '-')
                     ->placeholder('-')
                     ->hidden(fn ($state) => $state === null || $state === 0),
                 TextEntry::make('flinch_chance')
                     ->label('Flinch %')
                     ->numeric()
-                    ->formatStateUsing(fn ($state) => $state !== null ? $state . '%' : '-')
+                    ->formatStateUsing(fn ($state) => $state !== null ? $state.'%' : '-')
                     ->placeholder('-')
                     ->hidden(fn ($state) => $state === null || $state === 0),
                 TextEntry::make('crit_rate')
@@ -140,7 +143,7 @@ class MoveDetailsSection
                 TextEntry::make('stat_chance')
                     ->label('Stat Change %')
                     ->numeric()
-                    ->formatStateUsing(fn ($state) => $state !== null ? $state . '%' : '-')
+                    ->formatStateUsing(fn ($state) => $state !== null ? $state.'%' : '-')
                     ->placeholder('-')
                     ->hidden(fn ($state) => $state === null || $state === 0),
                 TextEntry::make('min_hits')
@@ -165,12 +168,12 @@ class MoveDetailsSection
                     ->hidden(fn ($state) => $state === null),
                 TextEntry::make('drain')
                     ->numeric()
-                    ->formatStateUsing(fn ($state) => $state !== null ? $state . '%' : '-')
+                    ->formatStateUsing(fn ($state) => $state !== null ? $state.'%' : '-')
                     ->placeholder('-')
                     ->hidden(fn ($state) => $state === null || $state === 0),
                 TextEntry::make('healing')
                     ->numeric()
-                    ->formatStateUsing(fn ($state) => $state !== null ? $state . '%' : '-')
+                    ->formatStateUsing(fn ($state) => $state !== null ? $state.'%' : '-')
                     ->placeholder('-')
                     ->hidden(fn ($state) => $state === null || $state === 0),
             ]);

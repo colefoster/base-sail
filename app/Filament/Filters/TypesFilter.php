@@ -12,8 +12,7 @@ class TypesFilter
     /**
      * Create a reusable Types filter with configurable column layout
      *
-     * @param int|null $columns Number of columns (2, 3, or 4). Null for single column, 0 for grouped.
-     * @return Filter
+     * @param  int|null  $columns  Number of columns (2, 3, or 4). Null for single column, 0 for grouped.
      */
     public static function make(?int $columns = null): Filter
     {
@@ -29,10 +28,10 @@ class TypesFilter
                     ])
                     ->default('any')
                     ->native(false),
-                self::getToggleButtons($columns)
+                self::getToggleButtons($columns),
             ])
             ->query(function ($query, array $data) {
-                if (!filled($data['type_ids'])) {
+                if (! filled($data['type_ids'])) {
                     return;
                 }
 
@@ -77,7 +76,7 @@ class TypesFilter
                 }
             })
             ->indicateUsing(function (array $data): array {
-                if (!filled($data['type_ids'])) {
+                if (! filled($data['type_ids'])) {
                     return [];
                 }
 
@@ -92,8 +91,8 @@ class TypesFilter
                 ];
 
                 $indicators = [
-                    \Filament\Tables\Filters\Indicator::make($modeLabels[$mode] . ': ' . $types->pluck('name')->map(fn($n) => ucfirst($n))->join(', '))
-                        ->removeField('type_ids', 'query_mode')
+                    \Filament\Tables\Filters\Indicator::make($modeLabels[$mode].': '.$types->pluck('name')->map(fn ($n) => ucfirst($n))->join(', '))
+                        ->removeField('type_ids', 'query_mode'),
                 ];
 
                 return $indicators;
@@ -102,9 +101,6 @@ class TypesFilter
 
     /**
      * Get the ToggleButtons component with configured columns
-     *
-     * @param int|null $columns
-     * @return ToggleButtons
      */
     protected static function getToggleButtons(?int $columns): ToggleButtons
     {
@@ -112,7 +108,7 @@ class TypesFilter
             ->label('Type')
             ->options(function () {
                 return Type::orderBy('name')->pluck('name', 'id')
-                    ->mapWithKeys(fn($name, $id) => [$id => ucfirst($name)]);
+                    ->mapWithKeys(fn ($name, $id) => [$id => ucfirst($name)]);
             })
             ->colors(function () {
                 return Type::orderBy('name')->pluck('name', 'id');

@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands\Seed;
 
-
 use App\Models\User;
 use Illuminate\Console\Command;
 
@@ -17,7 +16,7 @@ class SeedUsers extends Command
     public function handle(): int
     {
         try {
-            if (!$this->option('no-admin')) {
+            if (! $this->option('no-admin')) {
                 $this->info('Seeding admin user...');
                 if (User::where('email', 'test@example.com')->exists()) {
                     $this->info('Admin user already exists. Skipping...');
@@ -31,7 +30,7 @@ class SeedUsers extends Command
                 }
             }
 
-            if (!$this->option('no-guest')) {
+            if (! $this->option('no-guest')) {
                 $this->info('Seeding guest user...');
                 if (User::where('email', 'guest@example.com')->exists()) {
                     $this->info('Guest user already exists. Skipping...');
@@ -45,7 +44,7 @@ class SeedUsers extends Command
                 }
             }
         } catch (\Exception $e) {
-            $this->error('Error seeding users: ' . $e->getMessage());
+            $this->error('Error seeding users: '.$e->getMessage());
         }
 
         return 0;

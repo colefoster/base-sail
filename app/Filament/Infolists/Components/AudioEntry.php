@@ -9,8 +9,7 @@ class AudioEntry extends Entry
 {
     protected string $view = 'filament.infolists.components.audio-entry';
 
-
-    public function getSound(string $url) :MediaAction
+    public function getSound(string $url): MediaAction
     {
         return MediaAction::make('cry')
             ->iconButton()

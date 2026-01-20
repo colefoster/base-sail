@@ -14,19 +14,18 @@ class MoveTypeFilter
      * Note: This is different from TypesFilter - it's for filtering moves by their single type,
      * not Pokemon by their multiple types.
      *
-     * @param int|null $columns Number of columns (2, 3, or 4). Null for single column, 0 for grouped.
-     * @param mixed $pokemon Optional Pokemon instance to filter available types
-     * @return Filter
+     * @param  int|null  $columns  Number of columns (2, 3, or 4). Null for single column, 0 for grouped.
+     * @param  mixed  $pokemon  Optional Pokemon instance to filter available types
      */
     public static function make(?int $columns = null, $pokemon = null): Filter
     {
         return Filter::make('type')
             ->label('Move Type')
             ->schema([
-                self::getToggleButtons($columns, $pokemon)
+                self::getToggleButtons($columns, $pokemon),
             ])
             ->query(function ($query, array $data) {
-                if (!filled($data['type_ids'])) {
+                if (! filled($data['type_ids'])) {
                     return;
                 }
 
@@ -34,25 +33,21 @@ class MoveTypeFilter
                 $query->whereIn('type_id', $data['type_ids']);
             })
             ->indicateUsing(function (array $data): array {
-                if (!filled($data['type_ids'])) {
+                if (! filled($data['type_ids'])) {
                     return [];
                 }
 
                 $types = Type::whereIn('id', $data['type_ids'])->get();
 
                 return [
-                    \Filament\Tables\Filters\Indicator::make('Type: ' . $types->pluck('name')->map(fn($n) => ucfirst($n))->join(', '))
-                        ->removeField('type_ids')
+                    \Filament\Tables\Filters\Indicator::make('Type: '.$types->pluck('name')->map(fn ($n) => ucfirst($n))->join(', '))
+                        ->removeField('type_ids'),
                 ];
             });
     }
 
     /**
      * Get the ToggleButtons component with configured columns
-     *
-     * @param int|null $columns
-     * @param mixed|null $pokemon
-     * @return ToggleButtons
      */
     protected static function getToggleButtons(?int $columns, mixed $pokemon = null): ToggleButtons
     {
@@ -71,14 +66,14 @@ class MoveTypeFilter
                     return Type::whereIn('id', $typeIds)
                         ->orderBy('name')
                         ->pluck('name', 'id')
-                        ->map(fn($name) => ucfirst($name))
+                        ->map(fn ($name) => ucfirst($name))
                         ->toArray();
                 }
 
                 // Otherwise show all types
                 return Type::orderBy('name')
                     ->pluck('name', 'id')
-                    ->map(fn($name) => ucfirst($name))
+                    ->map(fn ($name) => ucfirst($name))
                     ->toArray();
             })
             ->colors(function () use ($pokemon) {

@@ -20,9 +20,13 @@ use Symfony\Component\Process\Process;
 trait ParallelSeeder
 {
     protected int $threads = 1;
+
     protected bool $isWorker = false;
+
     protected ?int $workerId = null;
+
     protected int $offset = 0;
+
     protected ?int $maxItems = null;
 
     /**
@@ -42,15 +46,15 @@ trait ParallelSeeder
      */
     protected function shouldRunInParallel(): bool
     {
-        return $this->threads > 1 && !$this->isWorker;
+        return $this->threads > 1 && ! $this->isWorker;
     }
 
     /**
      * Execute the seeder/command in parallel using multiple worker processes
      *
-     * @param string $seederClass The seeder class name
-     * @param int $totalItems Total number of items to process
-     * @param int $limit Items per page
+     * @param  string  $seederClass  The seeder class name
+     * @param  int  $totalItems  Total number of items to process
+     * @param  int  $limit  Items per page
      * @return bool True if all workers succeeded
      */
     protected function runInParallel(string $seederClass, int $totalItems, int $limit = 100): bool
@@ -73,11 +77,11 @@ trait ParallelSeeder
                 PHP_BINARY,
                 'artisan',
                 'db:seed',
-                '--class=' . $seederClass,
+                '--class='.$seederClass,
                 '--threads=1',
-                '--worker-id=' . $i,
-                '--offset=' . $offset,
-                '--max-items=' . $maxItems,
+                '--worker-id='.$i,
+                '--offset='.$offset,
+                '--max-items='.$maxItems,
             ];
 
             $process = new Process($command, base_path());
@@ -104,18 +108,18 @@ trait ParallelSeeder
             $workerId = $workerData['id'];
 
             $process->wait(function ($type, $buffer) use ($workerId) {
-                if (Process::ERR === $type) {
-                    $this->error("[Worker {$workerId}] ERROR: " . $buffer);
+                if ($type === Process::ERR) {
+                    $this->error("[Worker {$workerId}] ERROR: ".$buffer);
                 } else {
                     // Only show important output to reduce clutter
                     if (str_contains($buffer, 'imported:') || str_contains($buffer, 'Error')) {
-                        $this->line("[Worker {$workerId}] " . trim($buffer));
+                        $this->line("[Worker {$workerId}] ".trim($buffer));
                     }
                 }
             });
 
-            if (!$process->isSuccessful()) {
-                $this->error("[Worker {$workerId}] ❌ Failed with exit code: " . $process->getExitCode());
+            if (! $process->isSuccessful()) {
+                $this->error("[Worker {$workerId}] ❌ Failed with exit code: ".$process->getExitCode());
                 $allSuccessful = false;
             } else {
                 $this->info("[Worker {$workerId}] ✅ Completed successfully");
@@ -138,13 +142,17 @@ trait ParallelSeeder
      */
     protected function getWorkerPrefix(): string
     {
-        return $this->isWorker ? "[Worker {$this->workerId}] " : "";
+        return $this->isWorker ? "[Worker {$this->workerId}] " : '';
     }
 
     // Abstract method declarations for IDE support
     abstract public function option($key = null);
+
     abstract public function info($string, $verbosity = null);
+
     abstract public function error($string, $verbosity = null);
+
     abstract public function newLine($count = 1);
+
     abstract public function line($string, $style = null, $verbosity = null);
 }

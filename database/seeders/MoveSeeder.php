@@ -63,6 +63,6 @@ class MoveSeeder extends BasePokeApiSeeder
             }
         );
 
-        $this->command->info("Moves imported: " . Move::count());
+        $this->command->info('Moves imported: '.Move::count());
     }
 }

@@ -10,19 +10,18 @@ class LearnMethodFilter
     /**
      * Create a reusable Learn Method filter
      *
-     * @param int|null $columns Number of columns (2, 3, or 4). Null for single column, 0 for grouped.
-     * @param mixed $pokemon Optional Pokemon instance to filter available learn methods
-     * @return Filter
+     * @param  int|null  $columns  Number of columns (2, 3, or 4). Null for single column, 0 for grouped.
+     * @param  mixed  $pokemon  Optional Pokemon instance to filter available learn methods
      */
     public static function make(?int $columns = null, $pokemon = null): Filter
     {
         return Filter::make('learn_method')
             ->label('Learn Method')
             ->schema([
-                self::getToggleButtons($columns, $pokemon)
+                self::getToggleButtons($columns, $pokemon),
             ])
             ->query(function ($query, array $data) {
-                if (!filled($data['learn_methods'])) {
+                if (! filled($data['learn_methods'])) {
                     return;
                 }
 
@@ -30,27 +29,23 @@ class LearnMethodFilter
                 $query->whereIn('move_pokemon.learn_method', $data['learn_methods']);
             })
             ->indicateUsing(function (array $data): array {
-                if (!filled($data['learn_methods'])) {
+                if (! filled($data['learn_methods'])) {
                     return [];
                 }
 
                 $methods = collect($data['learn_methods'])
-                    ->map(fn($method) => ucwords(str_replace('-', ' ', $method)))
+                    ->map(fn ($method) => ucwords(str_replace('-', ' ', $method)))
                     ->join(', ');
 
                 return [
-                    \Filament\Tables\Filters\Indicator::make('Learn Method: ' . $methods)
-                        ->removeField('learn_methods')
+                    \Filament\Tables\Filters\Indicator::make('Learn Method: '.$methods)
+                        ->removeField('learn_methods'),
                 ];
             });
     }
 
     /**
      * Get the ToggleButtons component with configured columns
-     *
-     * @param int|null $columns
-     * @param mixed|null $pokemon
-     * @return ToggleButtons
      */
     protected static function getToggleButtons(?int $columns, mixed $pokemon = null): ToggleButtons
     {
@@ -81,14 +76,15 @@ class LearnMethodFilter
 
                     // Filter to only include available methods while preserving labels
                     return collect($allMethods)
-                        ->filter(fn($label, $key) => in_array($key, $availableMethods))
+                        ->filter(fn ($label, $key) => in_array($key, $availableMethods))
                         ->toArray();
                 }
+
                 // Otherwise show all methods
                 return $allMethods;
             })
             ->multiple()
-            ->colors(fn() => array_fill_keys(array_keys($allMethods), 'info'));
+            ->colors(fn () => array_fill_keys(array_keys($allMethods), 'info'));
 
         switch ($columns) {
             case 0:

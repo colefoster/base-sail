@@ -43,13 +43,17 @@ class ImportItems extends Command
                 $response = $this->api->fetch("/item?limit={$limit}&offset={$offset}");
                 $items = $response['results'] ?? [];
 
-                if (empty($items) || ($maxItems && $itemsProcessed >= $maxItems)) break;
+                if (empty($items) || ($maxItems && $itemsProcessed >= $maxItems)) {
+                    break;
+                }
 
                 $bar = $this->output->createProgressBar(count($items));
                 $bar->start();
 
                 foreach ($items as $itemData) {
-                    if ($maxItems && $itemsProcessed >= $maxItems) break;
+                    if ($maxItems && $itemsProcessed >= $maxItems) {
+                        break;
+                    }
 
                     try {
                         $itemsProcessed++;
@@ -86,14 +90,15 @@ class ImportItems extends Command
                 $this->newLine();
                 $offset += $limit;
 
-            } while (!empty($items) && (!$maxItems || $itemsProcessed < $maxItems));
+            } while (! empty($items) && (! $maxItems || $itemsProcessed < $maxItems));
 
             $this->showStats('Items', Item::count());
 
             return self::SUCCESS;
 
         } catch (\Exception $e) {
-            $this->error('❌ Import failed: ' . $e->getMessage());
+            $this->error('❌ Import failed: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }

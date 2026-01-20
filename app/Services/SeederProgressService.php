@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 class SeederProgressService
 {
     private const CACHE_KEY = 'seeder_progress';
+
     private const CACHE_TTL = 3600; // 1 hour
 
     public function start(string $step, int $total): void
@@ -50,7 +51,7 @@ class SeederProgressService
         Cache::put(self::CACHE_KEY, $data, self::CACHE_TTL);
     }
 
-    public function updateProgress(array $progress, int $successCount = null, int $errorCount = null): void
+    public function updateProgress(array $progress, ?int $successCount = null, ?int $errorCount = null): void
     {
         $data = $this->getProgress();
 

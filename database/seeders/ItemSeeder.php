@@ -37,6 +37,6 @@ class ItemSeeder extends BasePokeApiSeeder
             }
         );
 
-        $this->command->info("Items imported: " . Item::count());
+        $this->command->info('Items imported: '.Item::count());
     }
 }

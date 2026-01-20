@@ -13,7 +13,6 @@ use Filament\Schemas\Schema;
 
 class PokemonInfolist
 {
-
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -27,7 +26,7 @@ class PokemonInfolist
                 Grid::make(1)
                     ->schema([
                         SpriteViewerSection::make(),
-                        Livewire::make(PokemonStatsRadarChart::class, fn($record) => ['record' => $record]),
+                        Livewire::make(PokemonStatsRadarChart::class, fn ($record) => ['record' => $record]),
                     ])
                     ->columnSpan([
                         'sm' => 'full',
@@ -38,8 +37,8 @@ class PokemonInfolist
                 EvolutionsSection::make()
                     ->columnSpanFull(),
 
-                Livewire::make(PokemonMovesTable::class, fn($record) => ['pokemon' => $record])
-                    ->columnSpanFull()
+                Livewire::make(PokemonMovesTable::class, fn ($record) => ['pokemon' => $record])
+                    ->columnSpanFull(),
             ])
             ->columns([
                 'sm' => 1,

@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Models\Traits\FormatsNameAttribute;
+use App\Models\Traits\HasApiRouteKey;
+use App\Models\Traits\OrderedByApiId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,9 +12,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Ability extends Model
 {
-    use HasFactory, SoftDeletes;
+    use FormatsNameAttribute, HasApiRouteKey, HasFactory, OrderedByApiId, SoftDeletes;
 
-    #Table name is abilities not abilitys
     protected $table = 'abilities';
 
     protected $fillable = [
@@ -27,25 +28,6 @@ class Ability extends Model
         'api_id' => 'integer',
         'is_main_series' => 'boolean',
     ];
-
-    protected function name(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => ucwords(str_replace('-', ' ', $value)),
-        );
-    }
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope('ordered', function ($query) {
-            $query->orderBy('api_id');
-        });
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'api_id';
-    }
 
     public function pokemon(): BelongsToMany
     {

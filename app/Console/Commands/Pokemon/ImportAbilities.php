@@ -43,13 +43,17 @@ class ImportAbilities extends Command
                 $response = $this->api->fetch("/ability?limit={$limit}&offset={$offset}");
                 $abilities = $response['results'] ?? [];
 
-                if (empty($abilities) || ($maxItems && $itemsProcessed >= $maxItems)) break;
+                if (empty($abilities) || ($maxItems && $itemsProcessed >= $maxItems)) {
+                    break;
+                }
 
                 $bar = $this->output->createProgressBar(count($abilities));
                 $bar->start();
 
                 foreach ($abilities as $abilityData) {
-                    if ($maxItems && $itemsProcessed >= $maxItems) break;
+                    if ($maxItems && $itemsProcessed >= $maxItems) {
+                        break;
+                    }
 
                     try {
                         $itemsProcessed++;
@@ -80,14 +84,15 @@ class ImportAbilities extends Command
                 $this->newLine();
                 $offset += $limit;
 
-            } while (!empty($abilities) && (!$maxItems || $itemsProcessed < $maxItems));
+            } while (! empty($abilities) && (! $maxItems || $itemsProcessed < $maxItems));
 
             $this->showStats('Abilities', Ability::count());
 
             return self::SUCCESS;
 
         } catch (\Exception $e) {
-            $this->error('❌ Import failed: ' . $e->getMessage());
+            $this->error('❌ Import failed: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }

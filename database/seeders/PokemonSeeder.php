@@ -36,7 +36,7 @@ class PokemonSeeder extends BasePokeApiSeeder
             limit: 50
         );
 
-        $this->command->info("Pokemon imported: " . Pokemon::count());
+        $this->command->info('Pokemon imported: '.Pokemon::count());
     }
 
     private function createPokemon(array $pokemonDetails): Pokemon
@@ -114,7 +114,7 @@ class PokemonSeeder extends BasePokeApiSeeder
         $moveIds = [];
         foreach ($pokemonDetails['moves'] ?? [] as $moveData) {
             $move = Move::where('name', $moveData['move']['name'])->first();
-            if ($move && !isset($moveIds[$move->id])) {
+            if ($move && ! isset($moveIds[$move->id])) {
                 $versionGroupDetails = $moveData['version_group_details'][0] ?? null;
                 $moveIds[$move->id] = [
                     'learn_method' => $versionGroupDetails['move_learn_method']['name'] ?? null,
@@ -155,4 +155,3 @@ class PokemonSeeder extends BasePokeApiSeeder
         }
     }
 }
-

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Pokemon\Tables;
 
+use App\Filament\Filters\TypesFilter;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -9,14 +10,9 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\ColumnGroup;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
-use App\Filament\Filters\TypesFilter;
 
 class PokemonTable
 {
@@ -32,7 +28,7 @@ class PokemonTable
                         ->toggleable(isToggledHiddenByDefault: true),
                     TextColumn::make('name')
                         ->formatStateUsing(function ($state) {
-                            return str_replace(" ", "-", (ucwords(str_replace("-", " ", $state))));
+                            return str_replace(' ', '-', (ucwords(str_replace('-', ' ', $state))));
                         })
                         ->searchable()
                         ->sortable()
@@ -40,7 +36,7 @@ class PokemonTable
                     ImageColumn::make('sprite_front_default')
                         ->label('Sprite')
                         ->defaultImageUrl(asset('/images/3x-sprite-placeholder.png'))
-                        ->imageSize("20")
+                        ->imageSize('20')
                         ->toggleable()
                         ->alignCenter(),
                     TextColumn::make('types.name')
@@ -48,17 +44,17 @@ class PokemonTable
                         ->toggleable()
                         ->alignCenter()
                         ->badge()
-                        ->color(fn($state): string => $state)
-                        ->formatStateUsing(fn($state) => ucfirst($state)),
+                        ->color(fn ($state): string => $state)
+                        ->formatStateUsing(fn ($state) => ucfirst($state)),
                     TextColumn::make('height')
                         ->numeric()
                         ->toggleable()
-                        ->formatStateUsing(fn($state) => number_format($state, 1). " m")
+                        ->formatStateUsing(fn ($state) => number_format($state, 1).' m')
                         ->sortable(),
                     TextColumn::make('weight')
                         ->numeric()
                         ->toggleable()
-                        ->formatStateUsing(fn($state) => number_format($state, 1) . " kg")
+                        ->formatStateUsing(fn ($state) => number_format($state, 1).' kg')
                         ->sortable(),
                     TextColumn::make('species.generation')
                         ->label('Gen')
@@ -66,20 +62,21 @@ class PokemonTable
                         ->toggleable(isToggledHiddenByDefault: true)
                         ->formatStateUsing(function ($state) {
                             $gens = [
-                                "generation-i" => "Gen 1",
-                                "generation-ii" => "Gen 2",
-                                "generation-iii" => "Gen 3",
-                                "generation-iv" => "Gen 4",
-                                "generation-v" => "Gen 5",
-                                "generation-vi" => "Gen 6",
-                                "generation-vii" => "Gen 7",
-                                "generation-viii" => "Gen 8",
-                                "generation-ix" => "Gen 9",
-                                "generation-x" => "Gen 10",
+                                'generation-i' => 'Gen 1',
+                                'generation-ii' => 'Gen 2',
+                                'generation-iii' => 'Gen 3',
+                                'generation-iv' => 'Gen 4',
+                                'generation-v' => 'Gen 5',
+                                'generation-vi' => 'Gen 6',
+                                'generation-vii' => 'Gen 7',
+                                'generation-viii' => 'Gen 8',
+                                'generation-ix' => 'Gen 9',
+                                'generation-x' => 'Gen 10',
                             ];
+
                             return $gens[$state];
                         })
-                        ->sortable()
+                        ->sortable(),
                 ]),
 
                 ColumnGroup::make('Stats', [
@@ -181,13 +178,10 @@ class PokemonTable
                         }),
                 ]),
 
-
-
-
-//                TextColumn::make('cry_latest')
-//                    ->searchable(),
-//                TextColumn::make('cry_legacy')
-//                    ->searchable(),
+                //                TextColumn::make('cry_latest')
+                //                    ->searchable(),
+                //                TextColumn::make('cry_legacy')
+                //                    ->searchable(),
 
             ])
             ->filters([

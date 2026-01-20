@@ -8,9 +8,9 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -27,8 +27,8 @@ class ItemsTable
                 TextColumn::make('api_id')
                     ->numeric()
                     ->sortable()
-                ->toggleable()
-                ->hidden(),
+                    ->toggleable()
+                    ->hidden(),
                 TextColumn::make('name')
                     ->searchable(),
                 ImageColumn::make('sprite'),
@@ -85,12 +85,12 @@ class ItemsTable
                         $indicators = [];
 
                         if ($data['cost_from'] !== null) {
-                            $indicators[] = \Filament\Tables\Filters\Indicator::make('Min cost: $' . number_format($data['cost_from']))
+                            $indicators[] = \Filament\Tables\Filters\Indicator::make('Min cost: $'.number_format($data['cost_from']))
                                 ->removeField('cost_from');
                         }
 
                         if ($data['cost_to'] !== null) {
-                            $indicators[] = \Filament\Tables\Filters\Indicator::make('Max cost: $' . number_format($data['cost_to']))
+                            $indicators[] = \Filament\Tables\Filters\Indicator::make('Max cost: $'.number_format($data['cost_to']))
                                 ->removeField('cost_to');
                         }
 

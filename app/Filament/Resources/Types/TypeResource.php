@@ -13,17 +13,17 @@ use App\Models\Type;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class TypeResource extends Resource
 {
     protected static ?string $model = Type::class;
 
-    protected static string|BackedEnum|null $navigationIcon = "css-pokemon";
-    protected static string|null|\UnitEnum $navigationGroup = 'Data';
-    protected static ?int $navigationSort = 6;
+    protected static string|BackedEnum|null $navigationIcon = 'css-pokemon';
 
+    protected static string|null|\UnitEnum $navigationGroup = 'Data';
+
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $recordTitleAttribute = 'name';
 

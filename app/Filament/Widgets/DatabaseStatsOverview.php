@@ -69,6 +69,7 @@ class DatabaseStatsOverview extends StatsOverviewWidget
             $date = now()->subDays($i)->startOfDay();
             $data[] = $model::where('created_at', '<', $date->copy()->addDay())->count();
         }
+
         return $data;
     }
 }

@@ -38,6 +38,6 @@ class PokemonSpeciesSeeder extends BasePokeApiSeeder
             }
         );
 
-        $this->command->info("Pokemon Species imported: " . PokemonSpecies::count());
+        $this->command->info('Pokemon Species imported: '.PokemonSpecies::count());
     }
 }

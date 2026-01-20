@@ -10,7 +10,7 @@ class PokeApiService
 
     public function fetch(string $endpoint): array
     {
-        $url = str_starts_with($endpoint, 'http') ? $endpoint : self::BASE_URL . $endpoint;
+        $url = str_starts_with($endpoint, 'http') ? $endpoint : self::BASE_URL.$endpoint;
 
         $response = Http::get($url);
 
@@ -25,7 +25,7 @@ class PokeApiService
     {
         preg_match('/\/(\d+)\/$/', $url, $matches);
 
-        if (!isset($matches[1])) {
+        if (! isset($matches[1])) {
             throw new \Exception("Could not extract ID from URL: {$url}");
         }
 

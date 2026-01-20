@@ -29,19 +29,19 @@ class AbilitiesTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')
                     ->formatStateUsing(function ($state) {
-                        return str_replace(" ", "-", (ucwords(str_replace("-", " ", $state))));
+                        return str_replace(' ', '-', (ucwords(str_replace('-', ' ', $state))));
                     })
                     ->searchable()
                     ->sortable(),
                 ImageColumn::make('pokemon_sprites')
                     ->label('Pokemon')
-                    ->visible(fn() => self::$usePokemonSprites)
+                    ->visible(fn () => self::$usePokemonSprites)
                     ->getStateUsing(function ($record) {
                         // Store pokemon data as an array of arrays with sprite and URL
                         return $record->pokemon
-                            ->filter(fn($pokemon) => $pokemon->sprite_front_default)
+                            ->filter(fn ($pokemon) => $pokemon->sprite_front_default)
                             ->take(5)
-                            ->map(fn($pokemon) => [
+                            ->map(fn ($pokemon) => [
                                 'sprite' => $pokemon->sprite_front_default,
                                 'url' => \App\Filament\Resources\Pokemon\PokemonResource::getUrl('view', ['record' => $pokemon]),
                                 'name' => $pokemon->name,
@@ -53,10 +53,10 @@ class AbilitiesTable
                     ->toggleable(),
                 TextColumn::make('pokemon.name')
                     ->label('Pokemon')
-                    ->visible(fn() => !self::$usePokemonSprites)
+                    ->visible(fn () => ! self::$usePokemonSprites)
                     ->badge()
                     ->limitList(5)
-                    ->formatStateUsing(fn($state) => ucwords(str_replace('-', ' ', $state)))
+                    ->formatStateUsing(fn ($state) => ucwords(str_replace('-', ' ', $state)))
                     ->searchable()
                     ->toggleable(),
                 TextColumn::make('pokemon_count')

@@ -10,44 +10,40 @@ class MoveClassFilter
     /**
      * Create a reusable Move Class (Damage Class) filter
      *
-     * @param int|null $columns Number of columns (2, 3, or 4). Null for single column, 0 for grouped.
-     * @return Filter
+     * @param  int|null  $columns  Number of columns (2, 3, or 4). Null for single column, 0 for grouped.
      */
     public static function make(?int $columns = null): Filter
     {
         return Filter::make('damage_class')
             ->label('Move Class')
             ->schema([
-                self::getToggleButtons($columns)
+                self::getToggleButtons($columns),
             ])
             ->query(function ($query, array $data) {
-                if (!filled($data['damage_classes'])) {
+                if (! filled($data['damage_classes'])) {
                     return;
                 }
 
                 $query->whereIn('damage_class', $data['damage_classes']);
             })
             ->indicateUsing(function (array $data): array {
-                if (!filled($data['damage_classes'])) {
+                if (! filled($data['damage_classes'])) {
                     return [];
                 }
 
                 $classes = collect($data['damage_classes'])
-                    ->map(fn($class) => ucfirst($class))
+                    ->map(fn ($class) => ucfirst($class))
                     ->join(', ');
 
                 return [
-                    \Filament\Tables\Filters\Indicator::make('Class: ' . $classes)
-                        ->removeField('damage_classes')
+                    \Filament\Tables\Filters\Indicator::make('Class: '.$classes)
+                        ->removeField('damage_classes'),
                 ];
             });
     }
 
     /**
      * Get the ToggleButtons component with configured columns
-     *
-     * @param int|null $columns
-     * @return ToggleButtons
      */
     protected static function getToggleButtons(?int $columns): ToggleButtons
     {

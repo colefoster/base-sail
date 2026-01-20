@@ -18,7 +18,7 @@ class MoveInfolist
                     ->columnSpanFull(),
                 MoveDescriptionSection::make()
                     ->columnSpanFull(),
-                Livewire::make(MovePokemonTable::class, fn($record) => ['move' => $record])
+                Livewire::make(MovePokemonTable::class, fn ($record) => ['move' => $record])
                     ->columnSpanFull(),
             ]);
     }

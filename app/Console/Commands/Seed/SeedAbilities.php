@@ -20,6 +20,7 @@ class SeedAbilities extends Command
     protected $description = 'Seed abilities table from PokeAPI with parallel processing support';
 
     protected PokeApiService $api;
+
     protected int $delay;
 
     public function handle(): int
@@ -30,12 +31,12 @@ class SeedAbilities extends Command
         $threads = (int) $this->option('threads');
         $isWorker = $this->option('worker-id') !== null;
 
-        if ($threads > 1 && !$isWorker) {
+        if ($threads > 1 && ! $isWorker) {
             return $this->runInParallel();
         }
 
-        $prefix = $isWorker ? "[Worker {$this->option('worker-id')}] " : "";
-        $this->info($prefix . '⚡ Importing Abilities...');
+        $prefix = $isWorker ? "[Worker {$this->option('worker-id')}] " : '';
+        $this->info($prefix.'⚡ Importing Abilities...');
 
         try {
             $offset = (int) $this->option('offset');
@@ -47,7 +48,9 @@ class SeedAbilities extends Command
                 $response = $this->api->fetch("/ability?limit={$limit}&offset={$offset}");
                 $abilities = $response['results'] ?? [];
 
-                if (empty($abilities) || ($maxItems && $itemsProcessed >= $maxItems)) break;
+                if (empty($abilities) || ($maxItems && $itemsProcessed >= $maxItems)) {
+                    break;
+                }
 
                 $remaining = $maxItems ? min(count($abilities), $maxItems - $itemsProcessed) : count($abilities);
                 $bar = $this->output->createProgressBar($remaining);
@@ -82,12 +85,14 @@ class SeedAbilities extends Command
                 $this->newLine();
                 $offset += $limit;
 
-            } while (!empty($abilities) && (!$maxItems || $itemsProcessed < $maxItems));
+            } while (! empty($abilities) && (! $maxItems || $itemsProcessed < $maxItems));
 
-            $this->info($prefix . "Abilities imported: " . Ability::count());
+            $this->info($prefix.'Abilities imported: '.Ability::count());
+
             return self::SUCCESS;
         } catch (\Exception $e) {
-            $this->error('❌ Ability import failed: ' . $e->getMessage());
+            $this->error('❌ Ability import failed: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }
@@ -102,6 +107,7 @@ class SeedAbilities extends Command
 
         if ($totalItems === 0) {
             $this->warn('No abilities found to import.');
+
             return self::SUCCESS;
         }
 
@@ -112,14 +118,16 @@ class SeedAbilities extends Command
             $offset = $i * $itemsPerThread;
             $maxItems = min($itemsPerThread, $totalItems - $offset);
 
-            if ($maxItems <= 0) break;
+            if ($maxItems <= 0) {
+                break;
+            }
 
             $command = [
                 PHP_BINARY, 'artisan', 'seed:abilities',
-                '--threads=1', '--worker-id=' . $i,
-                '--offset=' . $offset, '--max-items=' . $maxItems,
-                '--delay=' . $this->option('delay'),
-                '--limit=' . $this->option('limit'),
+                '--threads=1', '--worker-id='.$i,
+                '--offset='.$offset, '--max-items='.$maxItems,
+                '--delay='.$this->option('delay'),
+                '--limit='.$this->option('limit'),
             ];
 
             $process = new Process($command, base_path());
@@ -137,14 +145,14 @@ class SeedAbilities extends Command
         foreach ($processes as $workerData) {
             $workerData['process']->wait();
             $success = $workerData['process']->isSuccessful();
-            $this->info("[Worker {$workerData['id']}] " . ($success ? '✅ Completed' : '❌ Failed'));
+            $this->info("[Worker {$workerData['id']}] ".($success ? '✅ Completed' : '❌ Failed'));
             $allSuccessful = $allSuccessful && $success;
         }
 
         if ($allSuccessful) {
             $this->newLine();
             $this->info('✅ All workers completed successfully!');
-            $this->info("Total abilities imported: " . Ability::count());
+            $this->info('Total abilities imported: '.Ability::count());
         }
 
         return $allSuccessful ? self::SUCCESS : self::FAILURE;

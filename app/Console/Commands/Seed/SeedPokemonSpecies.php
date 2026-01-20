@@ -20,6 +20,7 @@ class SeedPokemonSpecies extends Command
     protected $description = 'Seed pokemon_species table from PokeAPI with parallel processing support';
 
     protected PokeApiService $api;
+
     protected int $delay;
 
     public function handle(): int
@@ -30,12 +31,12 @@ class SeedPokemonSpecies extends Command
         $threads = (int) $this->option('threads');
         $isWorker = $this->option('worker-id') !== null;
 
-        if ($threads > 1 && !$isWorker) {
+        if ($threads > 1 && ! $isWorker) {
             return $this->runInParallel();
         }
 
-        $prefix = $isWorker ? "[Worker {$this->option('worker-id')}] " : "";
-        $this->info($prefix . '🧬 Importing Pokemon Species...');
+        $prefix = $isWorker ? "[Worker {$this->option('worker-id')}] " : '';
+        $this->info($prefix.'🧬 Importing Pokemon Species...');
 
         try {
             $offset = (int) $this->option('offset');
@@ -47,7 +48,9 @@ class SeedPokemonSpecies extends Command
                 $response = $this->api->fetch("/pokemon-species?limit={$limit}&offset={$offset}");
                 $speciesList = $response['results'] ?? [];
 
-                if (empty($speciesList) || ($maxItems && $itemsProcessed >= $maxItems)) break;
+                if (empty($speciesList) || ($maxItems && $itemsProcessed >= $maxItems)) {
+                    break;
+                }
 
                 $remaining = $maxItems ? min(count($speciesList), $maxItems - $itemsProcessed) : count($speciesList);
                 $bar = $this->output->createProgressBar($remaining);
@@ -88,12 +91,14 @@ class SeedPokemonSpecies extends Command
                 $this->newLine();
                 $offset += $limit;
 
-            } while (!empty($speciesList) && (!$maxItems || $itemsProcessed < $maxItems));
+            } while (! empty($speciesList) && (! $maxItems || $itemsProcessed < $maxItems));
 
-            $this->info($prefix . "Pokemon Species imported: " . PokemonSpecies::count());
+            $this->info($prefix.'Pokemon Species imported: '.PokemonSpecies::count());
+
             return self::SUCCESS;
         } catch (\Exception $e) {
-            $this->error('❌ Pokemon Species import failed: ' . $e->getMessage());
+            $this->error('❌ Pokemon Species import failed: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }
@@ -108,6 +113,7 @@ class SeedPokemonSpecies extends Command
 
         if ($totalItems === 0) {
             $this->warn('No pokemon species found to import.');
+
             return self::SUCCESS;
         }
 
@@ -118,14 +124,16 @@ class SeedPokemonSpecies extends Command
             $offset = $i * $itemsPerThread;
             $maxItems = min($itemsPerThread, $totalItems - $offset);
 
-            if ($maxItems <= 0) break;
+            if ($maxItems <= 0) {
+                break;
+            }
 
             $command = [
                 PHP_BINARY, 'artisan', 'seed:pokemon-species',
-                '--threads=1', '--worker-id=' . $i,
-                '--offset=' . $offset, '--max-items=' . $maxItems,
-                '--delay=' . $this->option('delay'),
-                '--limit=' . $this->option('limit'),
+                '--threads=1', '--worker-id='.$i,
+                '--offset='.$offset, '--max-items='.$maxItems,
+                '--delay='.$this->option('delay'),
+                '--limit='.$this->option('limit'),
             ];
 
             $process = new Process($command, base_path());
@@ -143,14 +151,14 @@ class SeedPokemonSpecies extends Command
         foreach ($processes as $workerData) {
             $workerData['process']->wait();
             $success = $workerData['process']->isSuccessful();
-            $this->info("[Worker {$workerData['id']}] " . ($success ? '✅ Completed' : '❌ Failed'));
+            $this->info("[Worker {$workerData['id']}] ".($success ? '✅ Completed' : '❌ Failed'));
             $allSuccessful = $allSuccessful && $success;
         }
 
         if ($allSuccessful) {
             $this->newLine();
             $this->info('✅ All workers completed successfully!');
-            $this->info("Total pokemon species imported: " . PokemonSpecies::count());
+            $this->info('Total pokemon species imported: '.PokemonSpecies::count());
         }
 
         return $allSuccessful ? self::SUCCESS : self::FAILURE;

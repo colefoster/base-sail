@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Pokemon\Schemas\Components;
 
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class SpritesSection
@@ -23,13 +22,13 @@ class SpritesSection
                 ImageEntry::make('sprite_front_default')
                     ->hiddenLabel(),
                 ImageEntry::make('sprite_front_shiny')
-                    //->belowContent(Schema::center(["Shiny"]))
+                    // ->belowContent(Schema::center(["Shiny"]))
                     ->hiddenLabel(),
 
                 ImageEntry::make('sprite_back_default')
                     ->hiddenLabel(),
                 ImageEntry::make('sprite_back_shiny')
-                   //->belowContent(Schema::center(["Shiny"]))
+                   // ->belowContent(Schema::center(["Shiny"]))
 
                     ->hiddenLabel(),
             ]);

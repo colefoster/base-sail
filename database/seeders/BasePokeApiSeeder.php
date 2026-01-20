@@ -10,6 +10,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 abstract class BasePokeApiSeeder extends Seeder
 {
     protected PokeApiService $api;
+
     protected SeederProgressService $progress;
 
     public function __construct()
@@ -47,11 +48,11 @@ abstract class BasePokeApiSeeder extends Seeder
                 $this->processBatch($items, $processItem, $resourceName);
                 $offset += $limit;
 
-            } while (!empty($items));
+            } while (! empty($items));
 
             $this->progress->complete($progressKey);
         } catch (\Exception $e) {
-            $this->command->error("❌ {$resourceName} import failed: " . $e->getMessage());
+            $this->command->error("❌ {$resourceName} import failed: ".$e->getMessage());
             $this->progress->error($e->getMessage());
         }
     }
@@ -77,7 +78,7 @@ abstract class BasePokeApiSeeder extends Seeder
             $this->processBatch($items, $processItem, $resourceName);
             $this->progress->complete($progressKey);
         } catch (\Exception $e) {
-            $this->command->error("❌ {$resourceName} import failed: " . $e->getMessage());
+            $this->command->error("❌ {$resourceName} import failed: ".$e->getMessage());
             $this->progress->error($e->getMessage());
         }
     }
@@ -98,7 +99,7 @@ abstract class BasePokeApiSeeder extends Seeder
                 $bar->advance();
                 $this->rateLimit();
             } catch (\Exception $e) {
-                $this->command->warn("\nError importing {$resourceName}: " . $e->getMessage());
+                $this->command->warn("\nError importing {$resourceName}: ".$e->getMessage());
                 $this->progress->error($e->getMessage());
             }
         }
@@ -113,6 +114,7 @@ abstract class BasePokeApiSeeder extends Seeder
     protected function getTotalCount(string $endpoint): int
     {
         $response = $this->api->fetch("{$endpoint}?limit=1&offset=0");
+
         return $response['count'] ?? 0;
     }
 

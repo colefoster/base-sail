@@ -14,4 +14,3 @@ Route::get('/pokebuilder', function () {
 Route::get('/home', function () {
     return Inertia::render('Home');
 })->name('home');
-

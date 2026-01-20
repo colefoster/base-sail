@@ -17,14 +17,14 @@ class PokemonStatsRadarChart extends Component
 
     protected function getTypeColor(): string
     {
-        if (!$this->record) {
+        if (! $this->record) {
             return '#3b82f6'; // Default blue
         }
 
         // Get the primary type (slot 1)
         $primaryType = $this->record->types()->wherePivot('slot', 1)->first();
 
-        if (!$primaryType) {
+        if (! $primaryType) {
             return '#3b82f6'; // Default blue
         }
 
@@ -37,6 +37,7 @@ class PokemonStatsRadarChart extends Component
     protected function hexToRgb(string $hex): array
     {
         $hex = ltrim($hex, '#');
+
         return [
             hexdec(substr($hex, 0, 2)),
             hexdec(substr($hex, 2, 2)),
@@ -46,7 +47,7 @@ class PokemonStatsRadarChart extends Component
 
     public function getChartData(): array
     {
-        if (!$this->record) {
+        if (! $this->record) {
             return [
                 'datasets' => [],
                 'labels' => [],
@@ -70,7 +71,7 @@ class PokemonStatsRadarChart extends Component
                         $this->record->specialDefenseStat ?? 0,
                         $this->record->speedStat ?? 0,
                     ],
-                    'backgroundColor' => $rgbaString, //Line fill color
+                    'backgroundColor' => $rgbaString, // Line fill color
                     'borderColor' => $rgbString,
                     'borderWidth' => 2,
                     'pointBackgroundColor' => $rgbString,

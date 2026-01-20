@@ -11,7 +11,6 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -32,7 +31,7 @@ class DashboardPanelProvider extends PanelProvider
             ->path('')
             ->login(Login::class)
             ->favicon(asset('/images/special-ball-96.png'))
-            ->brandName("Pokésite Dashboard")->sidebarCollapsibleOnDesktop()
+            ->brandName('Pokésite Dashboard')->sidebarCollapsibleOnDesktop()
             ->colors(
                 MyAppColors::loadAppColors(),
             )
@@ -65,4 +64,3 @@ class DashboardPanelProvider extends PanelProvider
             ]);
     }
 }
-

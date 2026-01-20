@@ -18,21 +18,24 @@ use Filament\Schemas\Components\Section;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Str;
 
-class ApiQueryWidget extends Widget implements HasForms, HasActions
+class ApiQueryWidget extends Widget implements HasActions, HasForms
 {
-    use InteractsWithForms;
     use InteractsWithActions;
+    use InteractsWithForms;
 
     protected string $view = 'filament.widgets.api-query-widget';
 
     protected int|string|array $columnSpan = 'full';
 
     public ?array $data = [];
+
     public ?string $responseBody = null;
+
     public ?int $statusCode = null;
+
     public ?string $statusText = null;
+
     public ?array $responseHeaders = null;
 
     public static function canView(): bool
@@ -109,7 +112,7 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
                         ->placeholder('{"key": "value"}')
                         ->rows(5)
                         ->helperText('Optional: Enter request body as JSON (for POST, PUT, PATCH)')
-                        ->visible(fn($get) => in_array($get('method'), ['POST', 'PUT', 'PATCH']))
+                        ->visible(fn ($get) => in_array($get('method'), ['POST', 'PUT', 'PATCH']))
                         ->columnSpanFull(),
 
                     Actions::make([
@@ -125,7 +128,7 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
                             ->label('Clear Response')
                             ->icon('heroicon-o-x-mark')
                             ->color('gray')
-                            ->visible(fn() => $this->responseBody !== null)
+                            ->visible(fn () => $this->responseBody !== null)
                             ->action(function () {
                                 $this->responseBody = null;
                                 $this->statusCode = null;
@@ -145,7 +148,7 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
                                 return $this->generateAndDownloadSqlite();
                             }),
                     ])
-                    ->alignEnd(),
+                        ->alignEnd(),
                 ]),
         ];
     }
@@ -162,9 +165,9 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
         try {
             // Parse headers if provided
             $headers = [];
-            if (!empty($data['headers']) && is_array($data['headers'])) {
+            if (! empty($data['headers']) && is_array($data['headers'])) {
                 foreach ($data['headers'] as $header) {
-                    if (!empty($header['key']) && !empty($header['value'])) {
+                    if (! empty($header['key']) && ! empty($header['value'])) {
                         $headers[$header['key']] = $header['value'];
                     }
                 }
@@ -172,7 +175,7 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
 
             // Parse body if provided
             $body = null;
-            if (!empty($data['body']) && in_array($data['method'], ['POST', 'PUT', 'PATCH'])) {
+            if (! empty($data['body']) && in_array($data['method'], ['POST', 'PUT', 'PATCH'])) {
                 $bodyArray = json_decode($data['body'], true);
                 if (json_last_error() === JSON_ERROR_NONE) {
                     $body = $bodyArray;
@@ -184,7 +187,7 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
             // Make the HTTP request
             $httpClient = Http::timeout(30)->withHeaders($headers);
 
-            $response = match($data['method']) {
+            $response = match ($data['method']) {
                 'GET' => $httpClient->get($data['url']),
                 'POST' => $httpClient->post($data['url'], $body ?? []),
                 'PUT' => $httpClient->put($data['url'], $body ?? []),
@@ -231,10 +234,10 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
     {
         try {
             // Create a temporary file for the SQLite database
-            $tempFile = tempnam(sys_get_temp_dir(), 'sample_db_') . '.sqlite';
+            $tempFile = tempnam(sys_get_temp_dir(), 'sample_db_').'.sqlite';
 
             // Create SQLite database connection
-            $pdo = new \PDO('sqlite:' . $tempFile);
+            $pdo = new \PDO('sqlite:'.$tempFile);
             $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
             // Create a simple table
@@ -263,7 +266,7 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
             $pdo = null;
 
             // Generate filename with timestamp
-            $filename = 'sample_database_' . date('Y-m-d_His') . '.sqlite';
+            $filename = 'sample_database_'.date('Y-m-d_His').'.sqlite';
 
             // Create download response
             $response = Response::download($tempFile, $filename, [
@@ -282,7 +285,7 @@ class ApiQueryWidget extends Widget implements HasForms, HasActions
             Notification::make()
                 ->title('Generation Failed')
                 ->danger()
-                ->body('Error generating SQLite database: ' . $e->getMessage())
+                ->body('Error generating SQLite database: '.$e->getMessage())
                 ->send();
 
             return null;

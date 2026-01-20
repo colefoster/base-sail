@@ -17,7 +17,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class PokemonMovesTable extends Component implements HasForms, HasTable, HasActions
+class PokemonMovesTable extends Component implements HasActions, HasForms, HasTable
 {
     use InteractsWithActions;
     use InteractsWithForms;
@@ -46,17 +46,17 @@ class PokemonMovesTable extends Component implements HasForms, HasTable, HasActi
                     ->label('Move Name')
                     ->searchable()
                     ->sortable()
-                    ->formatStateUsing(fn($state) => ucwords(str_replace('-', ' ', $state)))
-                    ->url(fn($record) => MoveResource::getUrl('view', ['record' => $record])),
+                    ->formatStateUsing(fn ($state) => ucwords(str_replace('-', ' ', $state)))
+                    ->url(fn ($record) => MoveResource::getUrl('view', ['record' => $record])),
                 TextColumn::make('type.name')
                     ->label('Type')
                     ->badge()
-                    ->color(fn($state): string => $state)
+                    ->color(fn ($state): string => $state)
                     ->sortable(),
                 TextColumn::make('damage_class')
                     ->label('Class')
                     ->badge()
-                    ->color(fn($state): string => $state)
+                    ->color(fn ($state): string => $state)
                     ->sortable(),
                 TextColumn::make('power')
                     ->label('Power')
@@ -72,7 +72,7 @@ class PokemonMovesTable extends Component implements HasForms, HasTable, HasActi
                     ->label('Accuracy')
                     ->numeric()
                     ->placeholder('-')
-                    ->formatStateUsing(fn($state) => $state ? $state . "%" : null)
+                    ->formatStateUsing(fn ($state) => $state ? $state.'%' : null)
                     ->sortable(),
                 TextColumn::make('learn_method')
                     ->label('Learn Method')
@@ -82,14 +82,14 @@ class PokemonMovesTable extends Component implements HasForms, HasTable, HasActi
                 TextColumn::make('level_learned_at')
                     ->label('Level')
                     ->sortable()
-                    ->getStateUsing(fn($record) => $record->level_learned_at > 0 ? $record->level_learned_at : null)
+                    ->getStateUsing(fn ($record) => $record->level_learned_at > 0 ? $record->level_learned_at : null)
                     ->numeric()
                     ->placeholder('-'),
             ])
             ->filters([
                 MoveTypeFilter::make(3, $this->pokemon),
                 MoveClassFilter::make(),
-                LearnMethodFilter::make(columns:3, pokemon:$this->pokemon),
+                LearnMethodFilter::make(columns: 3, pokemon: $this->pokemon),
             ])
             ->paginated([10, 25, 50, 100]);
     }

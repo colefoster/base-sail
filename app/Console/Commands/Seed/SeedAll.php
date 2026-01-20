@@ -49,6 +49,7 @@ class SeedAll extends Command
             foreach ($commands as [$command, $label, $skipOption]) {
                 if ($this->option($skipOption)) {
                     $this->warn("⏭️  Skipping {$label}...");
+
                     continue;
                 }
 
@@ -64,6 +65,7 @@ class SeedAll extends Command
 
                 if ($result !== self::SUCCESS) {
                     $this->error("❌ Failed to seed {$label}");
+
                     return self::FAILURE;
                 }
 
@@ -94,7 +96,8 @@ class SeedAll extends Command
 
             return self::SUCCESS;
         } catch (\Exception $e) {
-            $this->error('❌ Seeding failed: ' . $e->getMessage());
+            $this->error('❌ Seeding failed: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }

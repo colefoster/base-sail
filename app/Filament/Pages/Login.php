@@ -3,17 +3,12 @@
 namespace App\Filament\Pages;
 
 use Filament\Actions\Action;
-
-use Filament\Infolists\Components\TextEntry;
+use Filament\Auth\Pages\Login as BaseLogin;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
-
-use Filament\Auth\Pages\Login as BaseLogin;
-use Filament\Schemas\Components\Section;
-use Filament\Support\Colors\Color;
-use Filament\Notifications\Notification;
 use Filament\Support\Enums\Size;
 use Illuminate\Support\Facades\Auth;
 
@@ -49,17 +44,17 @@ class Login extends BaseLogin
                 // Customize your login form schema here
                 Section::make('User Access')
                     ->schema([
-                    $this->getEmailFormComponent(),
-                    $this->getPasswordFormComponent(),
-                    $this->getRememberFormComponent(),
-                    Actions::make(
-                        [
-                            Action::make('authenticate')
-                                ->label(__('filament-panels::auth/pages/login.form.actions.authenticate.label'))
-                                ->submit('authenticate'),
-                        ]
-                    )->fullWidth()
-                ])->collapsed(),
+                        $this->getEmailFormComponent(),
+                        $this->getPasswordFormComponent(),
+                        $this->getRememberFormComponent(),
+                        Actions::make(
+                            [
+                                Action::make('authenticate')
+                                    ->label(__('filament-panels::auth/pages/login.form.actions.authenticate.label'))
+                                    ->submit('authenticate'),
+                            ]
+                        )->fullWidth(),
+                    ])->collapsed(),
 
                 View::make('filament.components.login.custom-or')
                     ->columnSpanFull(),

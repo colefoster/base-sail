@@ -18,7 +18,6 @@ class MovesTable
 {
     public static bool $usePokemonSprites = true;
 
-
     public static function configure(Table $table): Table
     {
         return $table
@@ -30,7 +29,7 @@ class MovesTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')
                     ->formatStateUsing(function ($state) {
-                        return str_replace(" ", "-", (ucwords(str_replace("-", " ", $state))));
+                        return str_replace(' ', '-', (ucwords(str_replace('-', ' ', $state))));
                     })
                     ->searchable()
                     ->sortable(),
@@ -46,7 +45,7 @@ class MovesTable
                     ->toggleable(),
                 TextColumn::make('accuracy')
                     ->numeric()
-                    ->formatStateUsing(fn ($state) => $state . '%')
+                    ->formatStateUsing(fn ($state) => $state.'%')
                     ->placeholder('100%')
                     ->sortable()
                     ->toggleable(),
@@ -57,8 +56,8 @@ class MovesTable
                 TextColumn::make('type.name')
                     ->label('Type')
                     ->badge()
-                    ->color(fn($state): string => $state ?? 'gray')
-                    ->formatStateUsing(fn($state) => ucfirst($state ?? '-'))
+                    ->color(fn ($state): string => $state ?? 'gray')
+                    ->formatStateUsing(fn ($state) => ucfirst($state ?? '-'))
                     ->searchable()
                     ->toggleable(),
                 TextColumn::make('damage_class')
@@ -69,13 +68,13 @@ class MovesTable
                     ->toggleable(),
                 ImageColumn::make('pokemon_sprites')
                     ->label('Pokemon')
-                    ->visible(fn() => self::$usePokemonSprites)
+                    ->visible(fn () => self::$usePokemonSprites)
                     ->getStateUsing(function ($record) {
                         // Store pokemon data as an array of arrays with sprite and URL
                         return $record->pokemon
-                            ->filter(fn($pokemon) => $pokemon->sprite_front_default)
+                            ->filter(fn ($pokemon) => $pokemon->sprite_front_default)
                             ->take(3)
-                            ->map(fn($pokemon) => [
+                            ->map(fn ($pokemon) => [
                                 'sprite' => $pokemon->sprite_front_default,
                                 'url' => \App\Filament\Resources\Pokemon\PokemonResource::getUrl('view', ['record' => $pokemon]),
                                 'name' => $pokemon->name,
@@ -87,11 +86,11 @@ class MovesTable
                     ->toggleable(),
                 TextColumn::make('pokemon.name')
                     ->label('Pokemon')
-                    ->visible(fn() => !self::$usePokemonSprites)
+                    ->visible(fn () => ! self::$usePokemonSprites)
                     ->badge()
-                    ->color(fn($record) => $record->type?->name ?? 'gray')
+                    ->color(fn ($record) => $record->type?->name ?? 'gray')
                     ->limitList(3)
-                    ->formatStateUsing(fn($state) => ucwords(str_replace('-', ' ', $state)))
+                    ->formatStateUsing(fn ($state) => ucwords(str_replace('-', ' ', $state)))
                     ->searchable()
                     ->toggleable(),
                 TextColumn::make('pokemon_count')
@@ -103,19 +102,22 @@ class MovesTable
                 TextColumn::make('generation')
                     ->badge()
                     ->formatStateUsing(function ($state) {
-                        if (!$state) return '-';
+                        if (! $state) {
+                            return '-';
+                        }
                         $gens = [
-                            "generation-i" => "Gen 1",
-                            "generation-ii" => "Gen 2",
-                            "generation-iii" => "Gen 3",
-                            "generation-iv" => "Gen 4",
-                            "generation-v" => "Gen 5",
-                            "generation-vi" => "Gen 6",
-                            "generation-vii" => "Gen 7",
-                            "generation-viii" => "Gen 8",
-                            "generation-ix" => "Gen 9",
-                            "generation-x" => "Gen 10",
+                            'generation-i' => 'Gen 1',
+                            'generation-ii' => 'Gen 2',
+                            'generation-iii' => 'Gen 3',
+                            'generation-iv' => 'Gen 4',
+                            'generation-v' => 'Gen 5',
+                            'generation-vi' => 'Gen 6',
+                            'generation-vii' => 'Gen 7',
+                            'generation-viii' => 'Gen 8',
+                            'generation-ix' => 'Gen 9',
+                            'generation-x' => 'Gen 10',
                         ];
+
                         return $gens[$state] ?? ucwords(str_replace('-', ' ', $state));
                     })
                     ->searchable()
@@ -199,8 +201,8 @@ class MovesTable
                     ->falseLabel('Without Pokemon')
                     ->default(true)
                     ->queries(
-                        true: fn($query) => $query->has('pokemon', '>', 0),
-                        false: fn($query) => $query->has('pokemon', '=', 0),
+                        true: fn ($query) => $query->has('pokemon', '>', 0),
+                        false: fn ($query) => $query->has('pokemon', '=', 0),
                     ),
                 TrashedFilter::make(),
             ])

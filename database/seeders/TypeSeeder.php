@@ -25,6 +25,6 @@ class TypeSeeder extends BasePokeApiSeeder
             }
         );
 
-        $this->command->info("Types imported: " . Type::count());
+        $this->command->info('Types imported: '.Type::count());
     }
 }

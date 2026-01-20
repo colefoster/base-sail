@@ -13,7 +13,6 @@ use App\Models\Ability;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -21,9 +20,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class AbilityResource extends Resource
 {
     protected static ?string $model = Ability::class;
+
     protected static string|null|\UnitEnum $navigationGroup = 'Data';
 
-    protected static string|BackedEnum|null $navigationIcon = "css-pokemon";
+    protected static string|BackedEnum|null $navigationIcon = 'css-pokemon';
 
     protected static ?string $recordTitleAttribute = 'name';
 

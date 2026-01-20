@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Abilities\Pages;
 
 use App\Filament\Resources\Abilities\AbilityResource;
-use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewAbility extends ViewRecord

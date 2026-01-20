@@ -15,7 +15,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class MovePokemonTable extends Component implements HasForms, HasTable, HasActions
+class MovePokemonTable extends Component implements HasActions, HasForms, HasTable
 {
     use InteractsWithActions;
     use InteractsWithForms;
@@ -60,23 +60,23 @@ class MovePokemonTable extends Component implements HasForms, HasTable, HasActio
                     ->extraImgAttributes([
                         'class' => 'rounded-full',
                     ])
-                    ->url(fn($record) => PokemonResource::getUrl('view', ['record' => $record])),
+                    ->url(fn ($record) => PokemonResource::getUrl('view', ['record' => $record])),
                 TextColumn::make('name')
                     ->label('Pokémon Name')
                     ->searchable()
                     ->sortable()
-                    ->formatStateUsing(fn($state) => ucwords(str_replace('-', ' ', $state)))
-                    ->url(fn($record) => PokemonResource::getUrl('view', ['record' => $record])),
+                    ->formatStateUsing(fn ($state) => ucwords(str_replace('-', ' ', $state)))
+                    ->url(fn ($record) => PokemonResource::getUrl('view', ['record' => $record])),
                 TextColumn::make('types.name')
                     ->label('Type')
                     ->badge()
-                    ->color(fn($state): string => $state)
-                    ->formatStateUsing(fn($state) => ucfirst($state)),
+                    ->color(fn ($state): string => $state)
+                    ->formatStateUsing(fn ($state) => ucfirst($state)),
                 TextColumn::make('learn_method')
                     ->label('Learn Method')
                     ->badge()
                     ->sortable()
-                    ->formatStateUsing(fn($state) => ucwords(str_replace('-', ' ', $state ?? '-')))
+                    ->formatStateUsing(fn ($state) => ucwords(str_replace('-', ' ', $state ?? '-')))
                     ->placeholder('-')
                     ->searchable(),
                 TextColumn::make('level_learned_at')
@@ -84,7 +84,7 @@ class MovePokemonTable extends Component implements HasForms, HasTable, HasActio
                     ->sortable()
                     ->numeric()
                     ->placeholder('-')
-                    ->formatStateUsing(fn($state) => $state > 0 ? $state : null),
+                    ->formatStateUsing(fn ($state) => $state > 0 ? $state : null),
             ])
             ->defaultSort('name')
             ->paginated([10, 25, 50, 100]);

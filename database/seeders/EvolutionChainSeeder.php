@@ -29,7 +29,7 @@ class EvolutionChainSeeder extends BasePokeApiSeeder
             }
         );
 
-        $this->command->info("Evolution Chains imported: " . EvolutionChain::count());
+        $this->command->info('Evolution Chains imported: '.EvolutionChain::count());
     }
 
     private function parseEvolutionChain(EvolutionChain $evolutionChain, array $chainNode, ?int $fromSpeciesId = null): void
@@ -37,7 +37,7 @@ class EvolutionChainSeeder extends BasePokeApiSeeder
         $speciesName = $chainNode['species']['name'];
         $species = PokemonSpecies::where('name', $speciesName)->first();
 
-        if (!$species) {
+        if (! $species) {
             return;
         }
 

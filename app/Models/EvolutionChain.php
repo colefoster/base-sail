@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasApiRouteKey;
+use App\Models\Traits\OrderedByApiId;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EvolutionChain extends Model
 {
+    use HasApiRouteKey, HasFactory, OrderedByApiId;
+
     protected $fillable = [
         'api_id',
         'baby_trigger_item',
@@ -16,13 +20,6 @@ class EvolutionChain extends Model
     protected $casts = [
         'api_id' => 'integer',
     ];
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope('ordered', function ($query) {
-            $query->orderBy('api_id');
-        });
-    }
 
     public function species(): HasMany
     {

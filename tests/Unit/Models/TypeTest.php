@@ -12,7 +12,7 @@ class TypeTest extends TestCase
 
     public function test_type_has_fillable_attributes(): void
     {
-        $type = new Type();
+        $type = new Type;
 
         $this->assertEquals(['api_id', 'name'], $type->getFillable());
     }
@@ -32,7 +32,7 @@ class TypeTest extends TestCase
 
     public function test_type_has_pokemon_relationship(): void
     {
-        $type = new Type();
+        $type = new Type;
 
         $this->assertInstanceOf(
             \Illuminate\Database\Eloquent\Relations\BelongsToMany::class,
@@ -42,7 +42,7 @@ class TypeTest extends TestCase
 
     public function test_type_has_moves_relationship(): void
     {
-        $type = new Type();
+        $type = new Type;
 
         $this->assertInstanceOf(
             \Illuminate\Database\Eloquent\Relations\HasMany::class,

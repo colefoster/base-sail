@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,7 +17,7 @@ class DatabaseSeeder extends Seeder
         $limit = (int) ($this->command->option('limit') ?? 100);
 
         // Seed users first
-        $this->command->info("👥 Creating users...");
+        $this->command->info('👥 Creating users...');
         $this->call(UserSeeder::class);
         $this->command->newLine();
 
@@ -45,6 +44,7 @@ class DatabaseSeeder extends Seeder
 
             if ($result !== 0) {
                 $this->command->error("Failed to seed {$label}");
+
                 return;
             }
 
@@ -55,4 +55,3 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Database seeding completed successfully!');
     }
 }
-

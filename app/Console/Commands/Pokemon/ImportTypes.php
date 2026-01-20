@@ -34,7 +34,7 @@ class ImportTypes extends Command
 
         try {
             $offset = $this->getStartOffset();
-            $response = $this->api->fetch('/type?limit=100&offset=' . $offset);
+            $response = $this->api->fetch('/type?limit=100&offset='.$offset);
             $types = $response['results'] ?? [];
             $maxItems = $this->getMaxItems();
 
@@ -69,7 +69,8 @@ class ImportTypes extends Command
             return self::SUCCESS;
 
         } catch (\Exception $e) {
-            $this->error('❌ Import failed: ' . $e->getMessage());
+            $this->error('❌ Import failed: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }

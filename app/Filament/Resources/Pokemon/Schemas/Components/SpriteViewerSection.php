@@ -30,15 +30,15 @@ class SpriteViewerSection
                         Tabs\Tab::make('Shiny')
                             ->schema([
 
-                                        ImageEntry::make('sprite_front_shiny')
-                                            ->label('Front')
-                                            ->alignCenter(),
+                                ImageEntry::make('sprite_front_shiny')
+                                    ->label('Front')
+                                    ->alignCenter(),
 
-                                        ImageEntry::make('sprite_back_shiny')
-                                            ->label('Back')
-                                            ->alignCenter(),
-                                    ]),
+                                ImageEntry::make('sprite_back_shiny')
+                                    ->label('Back')
+                                    ->alignCenter(),
                             ]),
+                    ]),
             ])
             ->columns(1);
     }

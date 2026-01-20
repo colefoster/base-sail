@@ -9,9 +9,9 @@ use Filament\Widgets\ChartWidget;
 
 class PokemonStatsRadarChart extends ChartWidget
 {
-    protected  ?string $heading = 'Base Stats';
+    protected ?string $heading = 'Base Stats';
 
-    protected  ?string $maxHeight = '300px';
+    protected ?string $maxHeight = '300px';
 
     public ?Pokemon $record = null;
 
@@ -68,7 +68,7 @@ class PokemonStatsRadarChart extends ChartWidget
 
     protected function getOptions(): RawJs
     {
-        return RawJs::make(<<<JS
+        return RawJs::make(<<<'JS'
         {
             scales: {
                 r: {

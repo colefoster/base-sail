@@ -31,6 +31,6 @@ class AbilitySeeder extends BasePokeApiSeeder
             }
         );
 
-        $this->command->info("Abilities imported: " . Ability::count());
+        $this->command->info('Abilities imported: '.Ability::count());
     }
 }

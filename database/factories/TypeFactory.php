@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Type;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class TypeFactory extends Factory
 {
+    protected $model = Type::class;
+
     /**
      * Define the model's default state.
      *
@@ -16,8 +19,15 @@ class TypeFactory extends Factory
      */
     public function definition(): array
     {
+        static $apiId = 1;
+
         return [
-            //
+            'api_id' => $apiId++,
+            'name' => fake()->unique()->randomElement([
+                'normal', 'fire', 'water', 'electric', 'grass', 'ice',
+                'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug',
+                'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy',
+            ]),
         ];
     }
 }

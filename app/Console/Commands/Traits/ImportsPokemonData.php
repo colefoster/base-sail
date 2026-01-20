@@ -9,11 +9,17 @@ use App\Services\PokemonImportProgressService;
 trait ImportsPokemonData
 {
     protected PokeApiService $api;
+
     protected int $delay;
+
     protected int $successCount = 0;
+
     protected int $errorCount = 0;
+
     protected bool $isWorker = false;
+
     protected ?int $workerId = null;
+
     protected ?PokemonImportProgressService $progressService = null;
 
     protected function initializeImporter(int $delay): void
@@ -44,7 +50,7 @@ trait ImportsPokemonData
     protected function showStats(string $entityName, int $totalCount): void
     {
         $this->newLine();
-        $prefix = $this->isWorker ? "[Worker {$this->workerId}] " : "";
+        $prefix = $this->isWorker ? "[Worker {$this->workerId}] " : '';
         $this->info("{$prefix}{$entityName} imported: {$totalCount}");
         $this->info("{$prefix}Success: {$this->successCount} | Errors: {$this->errorCount}");
     }
@@ -52,7 +58,8 @@ trait ImportsPokemonData
     protected function shouldRunParallel(): bool
     {
         $threads = (int) $this->option('threads');
-        return $threads > 1 && !$this->isWorker;
+
+        return $threads > 1 && ! $this->isWorker;
     }
 
     protected function runInParallel(string $endpoint, string $commandName, array $additionalOptions = []): int
@@ -91,14 +98,14 @@ trait ImportsPokemonData
 
     protected function updateProgress(int $processed, ?int $total = null): void
     {
-        if ($this->progressService && !$this->isWorker) {
+        if ($this->progressService && ! $this->isWorker) {
             $this->progressService->updateStepProgress($processed, $total);
         }
     }
 
     protected function incrementProgress(int $amount = 1): void
     {
-        if ($this->progressService && !$this->isWorker) {
+        if ($this->progressService && ! $this->isWorker) {
             $this->progressService->incrementStepProgress($amount);
         }
     }

@@ -27,14 +27,14 @@ use Filament\Schemas\Components\Section;
 use Filament\Widgets\Widget;
 use Livewire\Attributes\On;
 
-class RunSeedersWidget extends Widget implements HasForms, HasActions
+class RunSeedersWidget extends Widget implements HasActions, HasForms
 {
-    use InteractsWithForms;
     use InteractsWithActions;
+    use InteractsWithForms;
 
     protected string $view = 'filament.widgets.run-seeders-widget';
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     public ?array $data = [];
 
@@ -45,8 +45,11 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
     }
 
     public bool $isImporting = false;
+
     public array $progress = [];
+
     public int $successCount = 0;
+
     public int $errorCount = 0;
 
     public function mount(): void
@@ -123,7 +126,7 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
     public function getClearAbilitiesAction(): Action
     {
         return Action::make('clearAbilities')
-            ->label('Clear Abilities (' . Ability::count() . ')')
+            ->label('Clear Abilities ('.Ability::count().')')
             ->color('danger')
             ->outlined()
             ->icon('heroicon-o-trash')
@@ -143,7 +146,7 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
     public function getClearMovesAction(): Action
     {
         return Action::make('clearMoves')
-            ->label('Clear Moves (' . Move::count() . ')')
+            ->label('Clear Moves ('.Move::count().')')
             ->color('danger')
             ->outlined()
             ->icon('heroicon-o-trash')
@@ -163,7 +166,7 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
     public function getClearItemsAction(): Action
     {
         return Action::make('clearItems')
-            ->label('Clear Items (' . Item::count() . ')')
+            ->label('Clear Items ('.Item::count().')')
             ->color('danger')
             ->outlined()
             ->icon('heroicon-o-trash')
@@ -183,7 +186,7 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
     public function getClearSpeciesAction(): Action
     {
         return Action::make('clearSpecies')
-            ->label('Clear Species (' . PokemonSpecies::count() . ')')
+            ->label('Clear Species ('.PokemonSpecies::count().')')
             ->color('danger')
             ->outlined()
             ->icon('heroicon-o-trash')
@@ -203,7 +206,7 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
     public function getClearEvolutionChainsAction(): Action
     {
         return Action::make('clearEvolutionChains')
-            ->label('Clear Evolutions (' . EvolutionChain::count() . ')')
+            ->label('Clear Evolutions ('.EvolutionChain::count().')')
             ->color('danger')
             ->outlined()
             ->icon('heroicon-o-trash')
@@ -269,38 +272,38 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
                                 ->schema([
                                     Checkbox::make('importTypes')
                                         ->label('Types')
-                                        ->helperText($counts['types'] . ' in database')
-                                        ->disabled(!$this->canImportTypes()),
+                                        ->helperText($counts['types'].' in database')
+                                        ->disabled(! $this->canImportTypes()),
 
                                     Checkbox::make('importAbilities')
                                         ->label('Abilities')
-                                        ->helperText($counts['abilities'] . ' in database')
-                                        ->disabled(!$this->canImportAbilities()),
+                                        ->helperText($counts['abilities'].' in database')
+                                        ->disabled(! $this->canImportAbilities()),
 
                                     Checkbox::make('importMoves')
                                         ->label('Moves')
-                                        ->helperText($this->canImportMoves() ? $counts['moves'] . ' in database' : $this->getDependencyMessage('moves'))
-                                        ->disabled(!$this->canImportMoves()),
+                                        ->helperText($this->canImportMoves() ? $counts['moves'].' in database' : $this->getDependencyMessage('moves'))
+                                        ->disabled(! $this->canImportMoves()),
 
                                     Checkbox::make('importItems')
                                         ->label('Items')
-                                        ->helperText($counts['items'] . ' in database')
-                                        ->disabled(!$this->canImportItems()),
+                                        ->helperText($counts['items'].' in database')
+                                        ->disabled(! $this->canImportItems()),
 
                                     Checkbox::make('importSpecies')
                                         ->label('Pokemon Species')
-                                        ->helperText($counts['species'] . ' in database')
-                                        ->disabled(!$this->canImportSpecies()),
+                                        ->helperText($counts['species'].' in database')
+                                        ->disabled(! $this->canImportSpecies()),
 
                                     Checkbox::make('importEvolutionChains')
                                         ->label('Evolution Chains')
-                                        ->helperText($this->canImportEvolutionChains() ? EvolutionChain::count() . ' in database' : $this->getDependencyMessage('evolution_chains'))
-                                        ->disabled(!$this->canImportEvolutionChains()),
+                                        ->helperText($this->canImportEvolutionChains() ? EvolutionChain::count().' in database' : $this->getDependencyMessage('evolution_chains'))
+                                        ->disabled(! $this->canImportEvolutionChains()),
 
                                     Checkbox::make('importPokemon')
                                         ->label('Pokemon')
-                                        ->helperText($this->canImportPokemon() ? $counts['pokemon'] . ' in database' : $this->getDependencyMessage('pokemon'))
-                                        ->disabled(!$this->canImportPokemon())
+                                        ->helperText($this->canImportPokemon() ? $counts['pokemon'].' in database' : $this->getDependencyMessage('pokemon'))
+                                        ->disabled(! $this->canImportPokemon())
                                         ->columnSpan(2),
                                 ]),
                         ])
@@ -314,8 +317,8 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
                             ->size('lg')
                             ->submit('startImport'),
                     ])
-                    ->alignEnd()
-                    ->fullWidth(),
+                        ->alignEnd()
+                        ->fullWidth(),
                 ])
                 ->collapsible(),
         ];
@@ -331,14 +334,15 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
         $data = $this->form->getState();
 
         // Validate at least one type is selected
-        if (!($data['importTypes'] ?? false) && !($data['importAbilities'] ?? false) && !($data['importMoves'] ?? false) &&
-            !($data['importItems'] ?? false) && !($data['importSpecies'] ?? false) && !($data['importEvolutionChains'] ?? false) &&
-            !($data['importPokemon'] ?? false)) {
+        if (! ($data['importTypes'] ?? false) && ! ($data['importAbilities'] ?? false) && ! ($data['importMoves'] ?? false) &&
+            ! ($data['importItems'] ?? false) && ! ($data['importSpecies'] ?? false) && ! ($data['importEvolutionChains'] ?? false) &&
+            ! ($data['importPokemon'] ?? false)) {
             Notification::make()
                 ->title('Import Error')
                 ->danger()
                 ->body('Please select at least one data type to import')
                 ->send();
+
             return;
         }
 
@@ -350,16 +354,30 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
 
         // Build the command to run seeders in the background
         $seeders = [];
-        if ($data['importTypes'] ?? false) $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\TypeSeeder';
-        if ($data['importAbilities'] ?? false) $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\AbilitySeeder';
-        if ($data['importMoves'] ?? false) $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\MoveSeeder';
-        if ($data['importItems'] ?? false) $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\ItemSeeder';
-        if ($data['importSpecies'] ?? false) $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\PokemonSpeciesSeeder';
-        if ($data['importEvolutionChains'] ?? false) $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\EvolutionChainSeeder';
-        if ($data['importPokemon'] ?? false) $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\PokemonSeeder';
+        if ($data['importTypes'] ?? false) {
+            $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\TypeSeeder';
+        }
+        if ($data['importAbilities'] ?? false) {
+            $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\AbilitySeeder';
+        }
+        if ($data['importMoves'] ?? false) {
+            $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\MoveSeeder';
+        }
+        if ($data['importItems'] ?? false) {
+            $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\ItemSeeder';
+        }
+        if ($data['importSpecies'] ?? false) {
+            $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\PokemonSpeciesSeeder';
+        }
+        if ($data['importEvolutionChains'] ?? false) {
+            $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\EvolutionChainSeeder';
+        }
+        if ($data['importPokemon'] ?? false) {
+            $seeders[] = 'db:seed --class=Database\\\\Seeders\\\\PokemonSeeder';
+        }
 
         // Build command to run all seeders sequentially
-        $seederCommands = array_map(function($seeder) use ($data) {
+        $seederCommands = array_map(function ($seeder) {
             return sprintf('php %s/artisan %s', base_path(), $seeder);
         }, $seeders);
 
@@ -375,7 +393,7 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
 
     public function updateProgress(): void
     {
-        if (!$this->isImporting) {
+        if (! $this->isImporting) {
             return;
         }
 
@@ -418,7 +436,7 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
 
     public function getProgressPercentage(): float
     {
-        if (!isset($this->progress['total']) || $this->progress['total'] === 0) {
+        if (! isset($this->progress['total']) || $this->progress['total'] === 0) {
             return 0;
         }
 
@@ -427,7 +445,7 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
 
     public function getStepLabel(): string
     {
-        return match($this->progress['current_step'] ?? 'start') {
+        return match ($this->progress['current_step'] ?? 'start') {
             'start' => 'Starting...',
             'types' => 'Importing Types',
             'abilities' => 'Importing Abilities',
@@ -484,7 +502,7 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
     // Get dependency message for disabled imports
     public function getDependencyMessage(string $type): string
     {
-        return match($type) {
+        return match ($type) {
             'moves' => Type::count() === 0 ? 'Requires Types to be imported first' : '',
             'evolution_chains' => PokemonSpecies::count() === 0 ? 'Requires Species to be imported first' : '',
             'pokemon' => $this->getPokemonDependencies(),
@@ -495,13 +513,23 @@ class RunSeedersWidget extends Widget implements HasForms, HasActions
     private function getPokemonDependencies(): string
     {
         $missing = [];
-        if (Type::count() === 0) $missing[] = 'Types';
-        if (Ability::count() === 0) $missing[] = 'Abilities';
-        if (Move::count() === 0) $missing[] = 'Moves';
-        if (Item::count() === 0) $missing[] = 'Items';
-        if (PokemonSpecies::count() === 0) $missing[] = 'Species';
+        if (Type::count() === 0) {
+            $missing[] = 'Types';
+        }
+        if (Ability::count() === 0) {
+            $missing[] = 'Abilities';
+        }
+        if (Move::count() === 0) {
+            $missing[] = 'Moves';
+        }
+        if (Item::count() === 0) {
+            $missing[] = 'Items';
+        }
+        if (PokemonSpecies::count() === 0) {
+            $missing[] = 'Species';
+        }
 
-        return !empty($missing) ? 'Requires: ' . implode(', ', $missing) : '';
+        return ! empty($missing) ? 'Requires: '.implode(', ', $missing) : '';
     }
 
     // Get current database counts
